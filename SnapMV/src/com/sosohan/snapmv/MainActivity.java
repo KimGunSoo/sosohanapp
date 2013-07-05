@@ -2,14 +2,35 @@ package com.sosohan.snapmv;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+	private Button btnVideoRecordActivity;
+	private View.OnClickListener btnClickListener;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		btnVideoRecordActivity = (Button) findViewById(R.id.video_record_A_btn);
+		btnClickListener = new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (v == btnVideoRecordActivity) {
+					Intent intent = new Intent(MainActivity.this,
+							VideoRecordActivity.class);
+					startActivity(intent);
+				}
+			}
+		};
+        btnVideoRecordActivity.setOnClickListener(btnClickListener);        
     }
 
 
