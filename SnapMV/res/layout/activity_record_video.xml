@@ -4,15 +4,20 @@
     android:orientation="vertical" >
 
     <Button
-        android:id="@+id/video_record_A_btn"
+        android:id="@+id/record_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="video record activity start" />
+        android:text="Record" />
 
-    <Button
-        android:id="@+id/play_bgm_A_btn"
+    <VideoView
+        android:id="@+id/videoView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="play bgm activity start" />
+        android:layout_height="210dp" />
+
+    <MediaController
+        android:id="@+id/mediaController1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </MediaController>
 
 </LinearLayout>

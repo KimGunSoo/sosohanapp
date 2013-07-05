@@ -23,8 +23,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sosohan.snapmv.VideoRecordActivity"
+            android:name="com.sosohan.snapmv.RecordVideoActivity"
             android:label="@string/title_activity_video_capture" >
+        </activity>
+        <activity
+            android:name="com.sosohan.snapmv.PlayBgmActivity"
+            android:label="@string/title_activity_play_bgm" >
         </activity>
     </application>
 

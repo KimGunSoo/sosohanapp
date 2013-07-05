@@ -10,6 +10,7 @@ import android.widget.Button;
 public class MainActivity extends Activity {
 
 	private Button btnVideoRecordActivity;
+	private Button btnPlayBgmActivity;
 	private View.OnClickListener btnClickListener;
 	
 	@Override
@@ -17,7 +18,9 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		btnVideoRecordActivity = (Button) findViewById(R.id.video_record_A_btn);
+		btnVideoRecordActivity	= (Button) findViewById(R.id.video_record_A_btn);
+		btnPlayBgmActivity		= (Button) findViewById(R.id.play_bgm_A_btn);
+		
 		btnClickListener = new View.OnClickListener() {
 
 			@Override
@@ -25,14 +28,20 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				if (v == btnVideoRecordActivity) {
 					Intent intent = new Intent(MainActivity.this,
-							VideoRecordActivity.class);
+							RecordVideoActivity.class);
+					startActivity(intent);
+				}else if (v == btnPlayBgmActivity) {
+					Intent intent = new Intent(MainActivity.this,
+							PlayBgmActivity.class);
 					startActivity(intent);
 				}
+				
 			}
 		};
-        btnVideoRecordActivity.setOnClickListener(btnClickListener);        
+		
+        btnVideoRecordActivity.setOnClickListener(btnClickListener);       
+        btnPlayBgmActivity.setOnClickListener(btnClickListener); 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
