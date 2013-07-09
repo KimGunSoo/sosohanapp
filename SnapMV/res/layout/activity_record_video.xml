@@ -9,15 +9,21 @@
         android:layout_height="wrap_content"
         android:text="Record" />
 
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher" />
+
+    <Button
+        android:id="@+id/preview_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Preview" />
+
     <VideoView
         android:id="@+id/videoView1"
         android:layout_width="match_parent"
         android:layout_height="210dp" />
-
-    <MediaController
-        android:id="@+id/mediaController1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    </MediaController>
 
 </LinearLayout>

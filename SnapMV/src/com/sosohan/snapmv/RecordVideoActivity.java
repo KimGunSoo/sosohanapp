@@ -22,18 +22,47 @@ public class RecordVideoActivity extends Activity {
 	public static final int REC_MOV = 1;
 	private static final String MOVE_URL = "/mnt/sdcard/mp4_sample_first.mp4";
 	private ArrayList<String> array = new ArrayList<String>();
-	private int count;
+	private int videoCount;
 	
 	private Button btnVideoRecord;
+	private Button btnPreview;
 	private View.OnClickListener btnClickListener;
-	
+	private VideoView videoView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_record_video);
-
+		
+        videoCount = 0;
+        videoView = (VideoView)findViewById(R.id.videoView1);
+        MediaController mediaController = new MediaController(this);
+        mediaController.setAnchorView(videoView);
+        
+        //Uri video = Uri.parse(MOVE_URL);
+        videoView.setMediaController(mediaController);
+       // videoView.setVideoURI(video);
+        videoView.requestFocus();
+        
+        MediaPlayer.OnCompletionListener mComplete = new MediaPlayer.OnCompletionListener() {			
+			
+        	@Override
+			public void onCompletion(MediaPlayer mp) {
+        		Log.e("JWJWJW", "onCompletion enter array.size()="+array.size()+",count="+videoCount);
+	       		if(array.size() > videoCount) {
+					Uri video1 = Uri.parse(array.get(videoCount).toString());					
+					videoView.setVideoURI(video1);
+					videoView.start();
+					videoCount++;
+				} else {
+					Log.e("JWJWJW", "play end");
+				}			
+			}
+		};
+		videoView.setOnCompletionListener(mComplete);
+		
 		btnVideoRecord = (Button) findViewById(R.id.record_btn);
+		btnPreview = (Button) findViewById(R.id.preview_btn);
 		
 		btnClickListener = new View.OnClickListener() {
 
@@ -43,41 +72,19 @@ public class RecordVideoActivity extends Activity {
 				if (v == btnVideoRecord) {
 					Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 					startActivityForResult(intent, REC_MOV);
+				}else if (v == btnPreview) {
+					videoCount = 0;
+					Log.e("JWJWJW", "btnPreview pushed" );
+					Uri video1 = Uri.parse(array.get(videoCount).toString());
+					videoView.setVideoURI(video1);
+					videoView.start();
+					videoCount++;
 				}
 			}
 		};
 		
 		btnVideoRecord.setOnClickListener(btnClickListener);
-		
-		array.add("/mnt/sdcard/mp4_sample_first.mp4");
-        array.add("/mnt/sdcard/mp4_sample_second.mp4");
-        count = 0;
-        final VideoView videoView = (VideoView)findViewById(R.id.videoView1);
-        MediaController mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoView);
-        
-        Uri video = Uri.parse(MOVE_URL);
-        videoView.setMediaController(mediaController);
-        videoView.setVideoURI(video);
-        videoView.requestFocus();
-        
-        MediaPlayer.OnCompletionListener mComplete = new MediaPlayer.OnCompletionListener() {			
-			@Override
-			public void onCompletion(MediaPlayer mp) {
-				count++;
-				if(array.size() > count) {
-					Uri video1 = Uri.parse(array.get(count).toString());					
-					videoView.setVideoURI(video1);
-					videoView.start();
-				} else {
-					Uri video2 = Uri.parse(array.get(0).toString());
-					videoView.setVideoURI(video2);
-					count = 0;
-				}
-			}
-		};
-		videoView.setOnCompletionListener(mComplete);
-		videoView.start();
+		btnPreview.setOnClickListener(btnClickListener);
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)
@@ -91,12 +98,13 @@ public class RecordVideoActivity extends Activity {
 	            String path = getPath(uri);
 	            String name = getName(uri);
 	            String uriId = getUriId(uri);
-	            Log.e("JWJWJW", "�ㅼ젣寃쎈줈 : " + path + "\n�뚯씪紐�: " + name + "\nuri : " + uri.toString() + "\nuri id : " + uriId);
+	            Log.e("JWJWJW", "path: " + path + "\nname: " + name + "\nuri : " + uri.toString() + "\nuri id : " + uriId);
+	            array.add(path);            
+	            Log.e("JWJWJW", "add " + path );
 	        }
 	    }	   
 	}
 	
-	// �ㅼ젣 寃쎈줈 李얘린
 	private String getPath(Uri uri)
 	{
 	    String[] projection = { MediaStore.Images.Media.DATA };
@@ -106,7 +114,6 @@ public class RecordVideoActivity extends Activity {
 	    return cursor.getString(column_index);
 	}
 	 
-	// �뚯씪紐�李얘린
 	private String getName(Uri uri)
 	{
 	    String[] projection = { MediaStore.Images.ImageColumns.DISPLAY_NAME };
@@ -117,7 +124,6 @@ public class RecordVideoActivity extends Activity {
 	    return cursor.getString(column_index);
 	}
 	 
-	// uri �꾩씠��李얘린
 	private String getUriId(Uri uri)
 	{
 	    String[] projection = { MediaStore.Images.ImageColumns._ID };
