@@ -2,7 +2,7 @@ package com.sosohan.snapmv;
 
 import java.util.ArrayList;
 
-import android.media.MediaPlayer;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,55 +14,28 @@ import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.MediaController;
-import android.widget.VideoView;
+import android.widget.ImageButton;
+
 
 public class RecordVideoActivity extends Activity {
 	
 	public static final int REC_MOV = 1;
-	private static final String MOVE_URL = "/mnt/sdcard/mp4_sample_first.mp4";
 	private ArrayList<String> array = new ArrayList<String>();
-	private int videoCount;
-	
+		
 	private Button btnVideoRecord;
 	private Button btnPreview;
+	private ImageButton btnDebug;
 	private View.OnClickListener btnClickListener;
-	private VideoView videoView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_record_video);
-		
-        videoCount = 0;
-        videoView = (VideoView)findViewById(R.id.videoView1);
-        MediaController mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoView);
-        
-        //Uri video = Uri.parse(MOVE_URL);
-        videoView.setMediaController(mediaController);
-       // videoView.setVideoURI(video);
-        videoView.requestFocus();
-        
-        MediaPlayer.OnCompletionListener mComplete = new MediaPlayer.OnCompletionListener() {			
-			
-        	@Override
-			public void onCompletion(MediaPlayer mp) {
-        		Log.e("JWJWJW", "onCompletion enter array.size()="+array.size()+",count="+videoCount);
-	       		if(array.size() > videoCount) {
-					Uri video1 = Uri.parse(array.get(videoCount).toString());					
-					videoView.setVideoURI(video1);
-					videoView.start();
-					videoCount++;
-				} else {
-					Log.e("JWJWJW", "play end");
-				}			
-			}
-		};
-		videoView.setOnCompletionListener(mComplete);
+		setContentView(R.layout.activity_record_video);       
 		
 		btnVideoRecord = (Button) findViewById(R.id.record_btn);
 		btnPreview = (Button) findViewById(R.id.preview_btn);
+		btnDebug = (ImageButton) findViewById(R.id.imageButton1);
 		
 		btnClickListener = new View.OnClickListener() {
 
@@ -71,20 +44,26 @@ public class RecordVideoActivity extends Activity {
 				// TODO Auto-generated method stub
 				if (v == btnVideoRecord) {
 					Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+					intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 3);
 					startActivityForResult(intent, REC_MOV);
-				}else if (v == btnPreview) {
-					videoCount = 0;
+				}else if (v == btnPreview) {					
 					Log.e("JWJWJW", "btnPreview pushed" );
-					Uri video1 = Uri.parse(array.get(videoCount).toString());
-					videoView.setVideoURI(video1);
-					videoView.start();
-					videoCount++;
+					Intent intent = new Intent(RecordVideoActivity.this, PreviewActivity.class);
+					intent.putStringArrayListExtra("videolist", array);	
+					startActivity(intent);
+				}else if (v == btnDebug )
+				{
+					array.add("/sdcard/DCIM/Camera/20130710_182252.mp4");
+					array.add("/sdcard/DCIM/Camera/20130710_182519.mp4");
+					array.add("/sdcard/DCIM/Camera/20130710_182645.mp4");
+				//	array.add("/sdcard/DCIM/Camera/20130710_191458.mp4");
 				}
 			}
 		};
 		
 		btnVideoRecord.setOnClickListener(btnClickListener);
 		btnPreview.setOnClickListener(btnClickListener);
+		btnDebug.setOnClickListener(btnClickListener);
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)

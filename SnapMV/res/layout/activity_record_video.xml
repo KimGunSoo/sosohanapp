@@ -21,9 +21,10 @@
         android:layout_height="wrap_content"
         android:text="Preview" />
 
-    <VideoView
-        android:id="@+id/videoView1"
+    <Button
+        android:id="@+id/done_btn"
         android:layout_width="match_parent"
-        android:layout_height="210dp" />
+        android:layout_height="wrap_content"
+        android:text="Done" />
 
 </LinearLayout>

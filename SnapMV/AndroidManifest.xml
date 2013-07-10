@@ -30,6 +30,11 @@
             android:name="com.sosohan.snapmv.PlayBgmActivity"
             android:label="@string/title_activity_play_bgm" >
         </activity>
+        <activity
+            android:name="com.sosohan.snapmv.PreviewActivity"
+            android:label="@string/title_activity_preview"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
     </application>
 
 </manifest>
