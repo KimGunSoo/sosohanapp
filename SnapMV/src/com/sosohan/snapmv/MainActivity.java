@@ -3,26 +3,21 @@ package com.sosohan.snapmv;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
 
 	private Button btnVideoRecordActivity;
 	private Button btnPlayBgmActivity;
 	private View.OnClickListener btnClickListener;
-	private LinearLayout layout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		
 		setContentView(R.layout.activity_main);
-		layout = (LinearLayout) findViewById(R.id.main_layout);
 		btnVideoRecordActivity	= (Button) findViewById(R.id.video_record_A_btn);
 		btnPlayBgmActivity		= (Button) findViewById(R.id.play_bgm_A_btn);
 		

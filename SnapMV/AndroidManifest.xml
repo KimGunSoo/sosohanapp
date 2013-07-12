@@ -27,6 +27,7 @@
         <activity
             android:name="com.sosohan.snapmv.RecordVideoActivity"
             android:label="@string/title_activity_video_capture"
+            android:screenOrientation="portrait" 
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"  >
         </activity>
         <activity
