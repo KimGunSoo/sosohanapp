@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="fill_parent"    
     android:orientation="vertical" >
 
     <Button
@@ -9,17 +9,17 @@
         android:layout_height="wrap_content"
         android:text="Record" />
 
-    <ImageButton
-        android:id="@+id/imageButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher" />
-
     <Button
         android:id="@+id/preview_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Preview" />
+
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher" />
 
     <Button
         android:id="@+id/done_btn"

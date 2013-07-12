@@ -56,7 +56,6 @@ public class RecordVideoActivity extends Activity {
 					array.add("/sdcard/DCIM/Camera/20130710_182252.mp4");
 					array.add("/sdcard/DCIM/Camera/20130710_182519.mp4");
 					array.add("/sdcard/DCIM/Camera/20130710_182645.mp4");
-				//	array.add("/sdcard/DCIM/Camera/20130710_191458.mp4");
 				}
 			}
 		};

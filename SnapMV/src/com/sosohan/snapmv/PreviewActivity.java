@@ -4,12 +4,14 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -17,10 +19,10 @@ public class PreviewActivity extends Activity {
 	private int videoCount = 0;
 	private VideoView previewView;
 	private ArrayList<String> videoArray;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_preview);
 		previewView = (VideoView)findViewById(R.id.previewView);
 		Intent intent = getIntent();
@@ -34,8 +36,7 @@ public class PreviewActivity extends Activity {
 
 		previewView.requestFocus();
 		
-		 MediaPlayer.OnCompletionListener mComplete = new MediaPlayer.OnCompletionListener() {			
-				
+		 MediaPlayer.OnCompletionListener mComplete = new MediaPlayer.OnCompletionListener() {					
 	        	@Override
 				public void onCompletion(MediaPlayer mp) {
 	        		Log.e("JWJWJW", "onCompletion enter array.size()="+videoArray.size()+",count="+videoCount);
@@ -51,9 +52,16 @@ public class PreviewActivity extends Activity {
 				}
 			};
 		previewView.setOnCompletionListener(mComplete);
+		
+	}	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
 		Uri video1 = Uri.parse(videoArray.get(videoCount).toString());
 		previewView.setVideoURI(video1);
 		previewView.start();
+		Log.e("JWJWJW", "play start");
 		videoCount++;
 	}
 
