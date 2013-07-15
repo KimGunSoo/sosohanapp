@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Thumbnails;
 import android.app.Activity;
@@ -29,6 +30,7 @@ public class RecordVideoActivity extends Activity {
 		
 	private Button btnVideoRecord;
 	private Button btnPreview;
+	private Button btnDone;
 	private ImageButton btnDebug;
 	private View.OnClickListener btnClickListener;
 	private Uri captureMediaUri;
@@ -44,6 +46,8 @@ public class RecordVideoActivity extends Activity {
 		
 		btnVideoRecord = (Button) findViewById(R.id.record_btn);
 		btnPreview = (Button) findViewById(R.id.preview_btn);
+		btnDone = (Button) findViewById(R.id.done_btn);
+		
 		btnDebug = (ImageButton) findViewById(R.id.imageButton1);
 		//thumbnailArray = (ImageView) findViewById(R.id.imageView1);
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
@@ -55,8 +59,10 @@ public class RecordVideoActivity extends Activity {
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView6));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView7));
 		
+		//final String path = getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath().toString();
+		
 		btnClickListener = new View.OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -64,30 +70,41 @@ public class RecordVideoActivity extends Activity {
 					if(videoIndex < 8)
 					{
 						final ContentValues values = new ContentValues();
-						videoFilename = "/sdcard/DCIM/sosohan"+videoIndex+".mp4";					
-						values.put(MediaStore.Video.Media.DATA, videoFilename);
-						captureMediaUri = getContentResolver().insert(
-								MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+						//videoFilename = path + "/sosohan"+videoIndex+".mp4";
+						//videoFilename = "/sdcard/DCIM/sosohan"+videoIndex+".mp4";
+						//values.put(MediaStore.Video.Media.DATA, videoFilename);
+						//captureMediaUri = getContentResolver().insert(
+						//		MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
 						final Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-						intent.putExtra(MediaStore.EXTRA_OUTPUT, captureMediaUri);
+						//intent.putExtra(MediaStore.EXTRA_OUTPUT, captureMediaUri);
 						intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 3);
 						startActivityForResult(intent, REC_MOV);
 					}
 				}else if (v == btnPreview) {					
-					Log.e("JWJWJW", "btnPreview pushed" );
 					Intent intent = new Intent(RecordVideoActivity.this, PreviewActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
 					startActivity(intent);
-				}else if (v == btnDebug )
+				}
+				else if (v == btnDone){
+					Intent intent = new Intent(RecordVideoActivity.this, MakeMVActivity.class);
+					intent.putStringArrayListExtra("videolist", array);	
+					startActivity(intent);
+				}
+				else if (v == btnDebug )
 				{
-					array.add("/sdcard/DCIM/sosohan0.mp4");
-					array.add("/sdcard/DCIM/sosohan1.mp4");					
+					//array.add("/sdcard/DCIM/sosohan0.mp4");
+					//array.add("/sdcard/DCIM/sosohan1.mp4");	
+					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
+					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
+					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
+					
 				}
 			}
 		};
 		
 		btnVideoRecord.setOnClickListener(btnClickListener);
 		btnPreview.setOnClickListener(btnClickListener);
+		btnDone.setOnClickListener(btnClickListener);
 		btnDebug.setOnClickListener(btnClickListener);
 	}
 	
@@ -98,9 +115,14 @@ public class RecordVideoActivity extends Activity {
 	    {
 	        if (requestCode == REC_MOV)
 	        {  
-	        	Log.e("JWJWJW", "add = " + videoFilename + ",index = "+videoIndex );
-	        	array.add(videoFilename); 
-	            Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoFilename, Thumbnails.MICRO_KIND);
+	        	Uri uri = intent.getData();
+	        	String path = getPath(uri);
+	        	//Log.e("JWJWJW", "add = " + videoFilename + ",index = "+videoIndex );
+	        	Log.e("JWJWJW", "add = " + uri.getPath() + "::" + path + ",index = "+videoIndex );
+	        	//array.add(videoFilename);
+	        	array.add(path);
+	        	//Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoFilename, Thumbnails.MICRO_KIND);
+	        	Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(path, Thumbnails.MICRO_KIND);
 	            thumbnailArray.get(videoIndex).setImageBitmap(thumbnail);
 	            videoIndex++;
 	        }
@@ -113,5 +135,32 @@ public class RecordVideoActivity extends Activity {
 		getMenuInflater().inflate(R.menu.video_capture, menu);
 		return true;
 	}
+	       private String getPath(Uri uri)
+	       {
+	           String[] projection = { MediaStore.Images.Media.DATA };
+	           Cursor cursor = managedQuery(uri, projection, null, null, null);
+	           int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+	           cursor.moveToFirst();
+	           return cursor.getString(column_index);
+	       }
+	        
+	       private String getName(Uri uri)
+	      {
+	           String[] projection = { MediaStore.Images.ImageColumns.DISPLAY_NAME };
+	           Cursor cursor = managedQuery(uri, projection, null, null, null);
+	           int column_index = cursor
+	                   .getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DISPLAY_NAME);
+	           cursor.moveToFirst();
+	           return cursor.getString(column_index);
+	       }
+	        
+	       private String getUriId(Uri uri)
+	       {
+	           String[] projection = { MediaStore.Images.ImageColumns._ID };
+	           Cursor cursor = managedQuery(uri, projection, null, null, null);
+	           int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID);
+	          cursor.moveToFirst();
+	           return cursor.getString(column_index);
+	       }
 
 }

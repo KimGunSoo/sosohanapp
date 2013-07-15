@@ -7,5 +7,6 @@
     <string name="title_activity_video_capture">VideoCaptureActivity</string>
     <string name="title_activity_play_bgm">PlayBgmActivity</string>
     <string name="title_activity_preview">PreviewActivity</string>
+    <string name="title_activity_make_mv">MakeMVActivity</string>
 
 </resources>
