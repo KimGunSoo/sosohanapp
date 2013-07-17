@@ -94,10 +94,12 @@ public class RecordVideoActivity extends Activity {
 				{
 					//array.add("/sdcard/DCIM/sosohan0.mp4");
 					//array.add("/sdcard/DCIM/sosohan1.mp4");	
-					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
-					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
-					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
-					
+					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
+					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
+					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
+					array.add("/sdcard/DCIM/Camera/20130717_120750.3gp");
+					array.add("/sdcard/DCIM/Camera/20130717_120236.3gp");
+					array.add("/sdcard/DCIM/Camera/20130717_120236.3gp");
 				}
 			}
 		};
@@ -135,32 +137,33 @@ public class RecordVideoActivity extends Activity {
 		getMenuInflater().inflate(R.menu.video_capture, menu);
 		return true;
 	}
-	       private String getPath(Uri uri)
-	       {
-	           String[] projection = { MediaStore.Images.Media.DATA };
-	           Cursor cursor = managedQuery(uri, projection, null, null, null);
-	           int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-	           cursor.moveToFirst();
-	           return cursor.getString(column_index);
-	       }
-	        
-	       private String getName(Uri uri)
-	      {
-	           String[] projection = { MediaStore.Images.ImageColumns.DISPLAY_NAME };
-	           Cursor cursor = managedQuery(uri, projection, null, null, null);
-	           int column_index = cursor
-	                   .getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DISPLAY_NAME);
-	           cursor.moveToFirst();
-	           return cursor.getString(column_index);
-	       }
-	        
-	       private String getUriId(Uri uri)
-	       {
-	           String[] projection = { MediaStore.Images.ImageColumns._ID };
-	           Cursor cursor = managedQuery(uri, projection, null, null, null);
-	           int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID);
-	          cursor.moveToFirst();
-	           return cursor.getString(column_index);
-	       }
+	
+	private String getPath(Uri uri)
+	{
+		String[] projection = { MediaStore.Images.Media.DATA };
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+
+	private String getName(Uri uri)
+	{
+		String[] projection = { MediaStore.Images.ImageColumns.DISPLAY_NAME };
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		int column_index = cursor
+				.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DISPLAY_NAME);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+
+	private String getUriId(Uri uri)
+	{
+		String[] projection = { MediaStore.Images.ImageColumns._ID };
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
 
 }
