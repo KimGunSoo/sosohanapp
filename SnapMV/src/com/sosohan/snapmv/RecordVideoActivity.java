@@ -97,9 +97,14 @@ public class RecordVideoActivity extends Activity {
 					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
 					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
 					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
-					array.add("/sdcard/DCIM/Camera/20130717_120750.3gp");
-					array.add("/sdcard/DCIM/Camera/20130718_173307.3gp");
-					array.add("/sdcard/DCIM/Camera/20130717_120236.3gp");					
+//					array.add("/sdcard/DCIM/Camera/20130717_120750.3gp");
+//					array.add("/sdcard/DCIM/Camera/20130718_173307.3gp");
+//					array.add("/sdcard/DCIM/Camera/20130717_120236.3gp");
+					array.add("/sdcard/DCIM/Camera/VID_20130719_170343.3gp");
+					array.add("/sdcard/DCIM/Camera/VID_20130719_180532.3gp");
+					array.add("/sdcard/DCIM/Camera/VID_20130719_180544.3gp");
+					array.add("/sdcard/DCIM/Camera/VID_20130717_165542.3gp");
+										
 					for(int i=0 ; i < array.size() ; i++)	{
 						Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
 						Log.e("JWJWJW", "onResume = " + array.get(i));
