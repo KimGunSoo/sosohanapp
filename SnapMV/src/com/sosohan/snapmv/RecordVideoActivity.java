@@ -30,14 +30,15 @@ public class RecordVideoActivity extends Activity {
 		
 	private Button btnVideoRecord;
 	private Button btnPreview;
-	private Button btnDone;
-	private ImageButton btnDebug;
+	private Button btnDone;	
 	private View.OnClickListener btnClickListener;
-	private Uri captureMediaUri;
+	
 	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();
 	private int videoIndex = 0;
 	private String videoFilename;
-	//ImageView thumbnailArray;
+	
+	private ImageButton btnDebug;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,6 +50,7 @@ public class RecordVideoActivity extends Activity {
 		btnDone = (Button) findViewById(R.id.done_btn);
 		
 		btnDebug = (ImageButton) findViewById(R.id.imageButton1);
+		
 		//thumbnailArray = (ImageView) findViewById(R.id.imageView1);
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView1));
@@ -80,7 +82,7 @@ public class RecordVideoActivity extends Activity {
 						intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 3);
 						startActivityForResult(intent, REC_MOV);
 					}
-				}else if (v == btnPreview) {					
+				}else if (v == btnPreview && !array.isEmpty()) {					
 					Intent intent = new Intent(RecordVideoActivity.this, PreviewActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
 					startActivity(intent);
@@ -117,6 +119,7 @@ public class RecordVideoActivity extends Activity {
 		btnVideoRecord.setOnClickListener(btnClickListener);
 		btnPreview.setOnClickListener(btnClickListener);
 		btnDone.setOnClickListener(btnClickListener);
+		
 		btnDebug.setOnClickListener(btnClickListener);
 	}
 

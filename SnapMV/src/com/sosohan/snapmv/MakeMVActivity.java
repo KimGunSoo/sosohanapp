@@ -1,7 +1,5 @@
 package com.sosohan.snapmv;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +14,6 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -25,21 +22,37 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
-//import android.media.videoeditor.VideoEditor;
-
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class MakeMVActivity extends Activity {
+	FileOutputStream fos;
+	FileChannel fcOut;
+	private void debugDumpOpen()
+	{		
+		try {
+			fos = new FileOutputStream("/sdcard/jw.mp4");
+			fcOut = fos.getChannel();
+			
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	private void debugDumpWrite(ByteBuffer buf)
+	{
+		try {
+			fcOut.write(buf);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	private ArrayList<String> decodingArray;
-	private MediaExtractor extractor;
-	private MediaCodec decoder;
-	private MediaFormat mediaFormat = null;
-	String mime = null;
-	
 	private Button btnTest;
 	private View.OnClickListener btnTestListener;
 	
-
+	//private boolean doing = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,19 +61,24 @@ public class MakeMVActivity extends Activity {
 		btnTest = (Button) findViewById(R.id.test_btn);		
 		Intent intent = getIntent();
 		decodingArray = (ArrayList<String>) intent.getSerializableExtra("videolist");
-		
-		extractor = new MediaExtractor();
-		
+				
 		btnTestListener = new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				//if(v== btnTest && !doing)
 				if(v== btnTest)
 				{
-					debugDumpOpen();
-					appendMV();
-					finish();
+					btnTest.setClickable(false);
+					new Thread(new Runnable(){
+						public void run(){
+							debugDumpOpen();
+							for (int i = 0; i < decodingArray.size() ; i ++)
+								appendMV(decodingArray.get(i));
+							//finish();
+						}
+					}).start();						
 				}
 			}
 		};
@@ -130,66 +148,47 @@ public class MakeMVActivity extends Activity {
 	    return colorFormat;
 	}
 	
-	FileOutputStream fos;
-	FileChannel fcOut;
-	private void debugDumpOpen()
-	{		
-		try {
-			fos = new FileOutputStream("/sdcard/jw.mp4");
-			fcOut = fos.getChannel();
-			
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
-	private void debugDumpWrite(ByteBuffer buf)
+	private MediaCodec videoDecoder;
+	private void appendMV(String path)
 	{
-		try {
-			fcOut.write(buf);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	private void appendMV()
-	{
-		Log.e("JWJWJW", "appendMV : " + decodingArray.get(1));
-		extractor.setDataSource(decodingArray.get(1));
-			
-		int numTracks = extractor.getTrackCount();		
+		String mime = null;
+		MediaFormat mediaFormat = null;
+		MediaExtractor extractor = null;
+		
+		extractor = new MediaExtractor();
+		Log.v("JWJWJW", "appendMV : " + path);
+		extractor.setDataSource(path);
+		
+		//int numTracks = extractor.getTrackCount();		
 		int i = 0;
 		mediaFormat = extractor.getTrackFormat(i);
-		int width = mediaFormat.getInteger(MediaFormat.KEY_WIDTH);
-		int height = mediaFormat.getInteger(MediaFormat.KEY_HEIGHT);
 				
 		extractor.selectTrack(0);
 		
 		mime = mediaFormat.getString(MediaFormat.KEY_MIME);
-		Log.e("JWJWJW", "numTracks" + i + ": " + mime);
-		Log.e("JWJWJW", "WIDTH" + i + ": " + width);
-		Log.e("JWJWJW", "HEIGHT" + i + ": " + height);
+		Log.i("JWJWJW", "numTracks" + i + ": " + mime + 
+				":KEY_WIDTH:" +mediaFormat.getInteger(MediaFormat.KEY_WIDTH) + 
+				":KEY_HEIGHT:" +mediaFormat.getInteger(MediaFormat.KEY_HEIGHT));
+				
+		videoDecoder = MediaCodec.createDecoderByType(mime);
+		videoDecoder.configure(mediaFormat, null, null, 0);
+		videoDecoder.start();
 		
-		decoder = MediaCodec.createDecoderByType(mime);
-		decoder.configure(mediaFormat, null, null, 0);
-		decoder.start();
-		
-		ByteBuffer[] inputBuffers = decoder.getInputBuffers();
-		ByteBuffer[] outputBuffers = decoder.getOutputBuffers();
+		ByteBuffer[] inputBuffers = videoDecoder.getInputBuffers();
+		ByteBuffer[] outputBuffers = videoDecoder.getOutputBuffers();
 
 		boolean inEOS = false;
 		boolean outEOS = false;
 		final long kTimeOutUs = 10000;
 		MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-		int numBytesDecoded = 0;
 
 		//initVideoEncoder(mime);
 		Log.d("JWJWJW", "init ok");
-		//while (i < 90)
+		
 		while (!outEOS)
 		{
 			if(!inEOS) {
-				int inBufIdx = decoder.dequeueInputBuffer(kTimeOutUs);
+				int inBufIdx = videoDecoder.dequeueInputBuffer(kTimeOutUs);
 				Log.d("JWJWJW", "inBufIdx:" + inBufIdx);
 				if(inBufIdx >= 0) {					
 					ByteBuffer dstBuf = inputBuffers[inBufIdx];
@@ -204,14 +203,14 @@ public class MakeMVActivity extends Activity {
 					}else {
 						ptTimeUs = extractor.getSampleTime();
 					}
-					decoder.queueInputBuffer(inBufIdx, 0, size, ptTimeUs, inEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
+					videoDecoder.queueInputBuffer(inBufIdx, 0, size, ptTimeUs, inEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
 					Log.d("JWJWJW", "ptTimeUs =" +ptTimeUs);
 					if(!inEOS) {
 						extractor.advance();					
 					}
 				}
 			}
-			int res = decoder.dequeueOutputBuffer(info, kTimeOutUs);
+			int res = videoDecoder.dequeueOutputBuffer(info, kTimeOutUs);
 			Log.d("JWJWJW", "outBufIdx (?) :" + res);
 			if (res >= 0) {
 				int outBufIdx = res;
@@ -219,41 +218,37 @@ public class MakeMVActivity extends Activity {
 				buf.position(info.offset);
 				buf.limit(info.offset + info.size);
 				
-				{
-					//int limit = buf.limit();
-					//int pos = buf.position();
-					//Log.d("JWJWJW decoder", "buf limit = " + limit + ", position = " + pos);
-					//	Log.d("JWJWJW decoder", "info offset = " + info.offset + ", size = " + info.size);
-				}
 				debugDumpWrite(buf);
-				decoder.releaseOutputBuffer(outBufIdx, false /*render*/);
+				videoDecoder.releaseOutputBuffer(outBufIdx, false /*render*/);
 				if((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0)
 				{
 					Log.e("JWJWJW","BUFFER_FLAG_END_OF_STREAM");
 					outEOS = true;
 				}				
 			} else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED){
-				outputBuffers = decoder.getOutputBuffers();
+				outputBuffers = videoDecoder.getOutputBuffers();
 				Log.d("JWJWJW","INFO_OUTPUT_BUFFERS_CHANGED");
 			} else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED){
-				MediaFormat oformat = decoder.getOutputFormat();
+				MediaFormat oformat = videoDecoder.getOutputFormat();
 				Log.d("JWJWJW","INFO_OUTPUT_FORMAT_CHANGED" + oformat);
-			}else if (res == MediaCodec.INFO_TRY_AGAIN_LATER){
-				Log.d("JWJWJW","INFO_TRY_AGAIN_LATER" );
-				try {
-					Thread.sleep(500);
-					i ++;
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}				
 			}
-
+//			else if (res == MediaCodec.INFO_TRY_AGAIN_LATER){
+//				Log.d("JWJWJW","INFO_TRY_AGAIN_LATER" );
+//				try {
+//					Thread.sleep(500);
+//					i ++;
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}				
+//			}
 
 		}
-		decoder.stop();
-		decoder.release();
-		decoder = null;
+		videoDecoder.stop();
+		videoDecoder.release();
+		videoDecoder = null;
+		btnTest.setClickable(true);
+		finish();
 	}
 	@Override
 	protected void onResume() {

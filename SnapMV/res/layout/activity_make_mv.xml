@@ -8,15 +8,24 @@
     <Button
         android:id="@+id/test_btn"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Test" />
 
-    <ImageView
-        android:id="@+id/imageView1"
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_gravity="center" 
+         android:layout_weight="1"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_recent_history" />
+        android:layout_weight="1" />
 
 </LinearLayout>
