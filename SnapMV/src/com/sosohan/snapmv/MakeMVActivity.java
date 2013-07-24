@@ -43,6 +43,26 @@ public class MakeMVActivity extends Activity {
 		debugFile.write(buf);
 	}
 	
+	private SnapFileWriter outputFile = null;
+	private void outputOpen()
+	{	
+		outputFile = new SnapFileWriter();		
+		outputFile.open("/sdcard/snap.mp4");
+	}
+	private void outputClose()
+	{
+		outputFile.close();
+		outputFile = null;
+	}
+	private void outputWrite(ByteBuffer buf)
+	{
+		if (outputFile == null)
+		{
+			Log.e("JWJWJW", "output file is not opened.");
+		}
+		outputFile.write(buf);
+	}
+
 	private ArrayList<String> decodingArray;
 	private Button btnTest;
 	private View.OnClickListener btnTestListener;
@@ -68,8 +88,10 @@ public class MakeMVActivity extends Activity {
 					new Thread(new Runnable(){
 						public void run(){
 							debugDumpOpen();
+							outputOpen();
 							for (int i = 0; i < decodingArray.size() ; i ++)
 								appendMV(decodingArray.get(i));
+							outputClose();
 							debugDumpClose();
 						}
 					}).start();						
@@ -86,10 +108,10 @@ public class MakeMVActivity extends Activity {
 	{	
 		videoEncoder = MediaCodec.createEncoderByType(mimeType);
 		Log.i("JWJWJW initVideoEncoder", "MediaCodec.createEncoderByType "+mimeType);
-		MediaFormat mediaFormat = MediaFormat.createVideoFormat(mimeType, 720, 480);
-		mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 125000);
-		mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
-	    mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,findColorFormat(mimeType));
+		MediaFormat mediaFormat = MediaFormat.createVideoFormat(mimeType, 640, 480);
+		mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 7000000);
+		mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 10);
+	    mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, findColorFormat(mimeType));
 	    mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 5);
 	    videoEncoder.configure(mediaFormat,null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 	    videoEncoder.start();
@@ -176,18 +198,18 @@ public class MakeMVActivity extends Activity {
 		final long kTimeOutUs = 10000;
 		MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
 
-		//initVideoEncoder(mime);
+		initVideoEncoder(mime);
 		Log.d("JWJWJW", "init ok");
 		
 		while (!outEOS)
 		{
 			if(!inEOS) {
 				int inBufIdx = videoDecoder.dequeueInputBuffer(kTimeOutUs);
-				Log.d("JWJWJW", "inBufIdx:" + inBufIdx);
+				//Log.d("JWJWJW", "inBufIdx:" + inBufIdx);
 				if(inBufIdx >= 0) {					
 					ByteBuffer dstBuf = inputBuffers[inBufIdx];
 					int size = extractor.readSampleData(dstBuf, 0);
-					Log.d("JWJWJW", "size:" + size);
+					//Log.d("JWJWJW", "size:" + size);
 					long ptTimeUs = 0;
 					if(size < 0) {
 						Log.d("JWJWJW", "inEOS");
@@ -198,7 +220,7 @@ public class MakeMVActivity extends Activity {
 						ptTimeUs = extractor.getSampleTime();
 					}
 					videoDecoder.queueInputBuffer(inBufIdx, 0, size, ptTimeUs, inEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
-					Log.d("JWJWJW", "ptTimeUs =" +ptTimeUs);
+					//Log.d("JWJWJW", "ptTimeUs =" +ptTimeUs);
 					if(!inEOS) {
 						extractor.advance();					
 					}
@@ -211,13 +233,14 @@ public class MakeMVActivity extends Activity {
 				ByteBuffer buf = outputBuffers[outBufIdx];
 				Log.d("JWJWJW", "info.offset :" + info.offset + "info.size :" + info.size);
 				buf.position(info.offset);
-				buf.limit(info.offset + info.size);
+				buf.limit(/*info.offset +*/ info.size);
 				
-				debugDumpWrite(buf);
+				//debugDumpWrite(buf);
+				writeVideoData(buf);
 				videoDecoder.releaseOutputBuffer(outBufIdx, false /*render*/);
 				if((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0)
 				{
-					Log.e("JWJWJW","BUFFER_FLAG_END_OF_STREAM");
+					Log.i("JWJWJW","BUFFER_FLAG_END_OF_STREAM");
 					outEOS = true;
 				}				
 			} else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED){
@@ -248,34 +271,29 @@ public class MakeMVActivity extends Activity {
 	
 	void writeVideoData(ByteBuffer input)
 	{
-		
-	    try {
-	        ByteBuffer[] inputBuffers = videoEncoder.getInputBuffers();
-	        ByteBuffer[] outputBuffers = videoEncoder.getOutputBuffers();
-	        int inputBufferIndex = videoEncoder.dequeueInputBuffer(-1);
-	        if (inputBufferIndex >= 0) {
-	            ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
-	            inputBuffer.clear();
-	            inputBuffer.put(input);
-	            videoEncoder.queueInputBuffer(inputBufferIndex, 0, input.limit(), 0, 0);
-	        }
+		ByteBuffer[] inputBuffers = videoEncoder.getInputBuffers();
+		ByteBuffer[] outputBuffers = videoEncoder.getOutputBuffers();
+		int inputBufferIndex = videoEncoder.dequeueInputBuffer(-1);
+		if (inputBufferIndex >= 0) {
+			ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
+			inputBuffer.clear();
+			inputBuffer.put(input);
+			videoEncoder.queueInputBuffer(inputBufferIndex, 0, input.limit(), 0, 0);
+		}
 
-	        MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-	        int outputBufferIndex = videoEncoder.dequeueOutputBuffer(bufferInfo,0);
-	        while (outputBufferIndex >= 0) {
-	            ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
-	            byte[] outData = new byte[bufferInfo.size];
-	            outputBuffer.get(outData);
-	           // outputStream.write(outData, 0, outData.length);
-	            Log.i("JWJWJW AvcEncoder", outData.length + " bytes written");
-
-	            videoEncoder.releaseOutputBuffer(outputBufferIndex, false);
-	            outputBufferIndex = videoEncoder.dequeueOutputBuffer(bufferInfo, 0);
-	        }
-	    } catch (Throwable t) {
-	        t.printStackTrace();
-	    }
-		
+		MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+		int outputBufferIndex = videoEncoder.dequeueOutputBuffer(bufferInfo,0);
+		Log.i("JWJWJW AvcEncoder", "outputBufferIndex:" + outputBufferIndex);
+		while (outputBufferIndex >= 0) {
+			ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
+			outputBuffer.position(bufferInfo.offset);
+			outputBuffer.limit(bufferInfo.size);
+			outputWrite(outputBuffer);
+			videoEncoder.releaseOutputBuffer(outputBufferIndex, false);
+			outputBufferIndex = videoEncoder.dequeueOutputBuffer(bufferInfo, 0);
+			Log.i("JWJWJW AvcEncoder", bufferInfo.size + " bytes written offset :"
+					+ bufferInfo.offset );
+		}
 	}
 		
 	@Override
