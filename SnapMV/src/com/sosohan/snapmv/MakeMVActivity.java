@@ -40,6 +40,7 @@ public class MakeMVActivity extends Activity {
 	
 	private SnapFileWriter debugFile = null;
 	private final String intermediateVideo = "/sdcard/snap.h264";
+	private final String outputMV = "/sdcard/DCIM/snap.mp4";
 	private void debugDumpOpen()
 	{	
 		debugFile = new SnapFileWriter();		
@@ -94,7 +95,6 @@ public class MakeMVActivity extends Activity {
 		decodingArray = (ArrayList<String>) intent.getSerializableExtra("videolist");
 				
 		btnTestListener = new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 
@@ -104,32 +104,33 @@ public class MakeMVActivity extends Activity {
 					
 					new Thread(new Runnable(){
 						public void run(){
-							debugDumpOpen();
+							//debugDumpOpen();
 							outputOpen();
 							for (int i = 0; i < decodingArray.size() ; i ++)
 							{
 								appendMV(decodingArray.get(i));
-							}							
+							}
+							destroyVideoEncoder();
 							outputClose();
 							makeMP4();
-							debugDumpClose();
+							//debugDumpClose();
 							finish();
 						}
+
+						
 					}).start();						
 				}
 			}
-		};
-		
-		btnTest.setOnClickListener(btnTestListener);		
-		 // Find a code that supports the mime type	   
+		};		
+		btnTest.setOnClickListener(btnTestListener);	
 	}
 	
 	private MediaCodec videoEncoder;
-	private void initVideoEncoder(String mimeType)
+	private void initVideoEncoder(String mimeType, int width, int height)
 	{			
 		videoEncoder = MediaCodec.createEncoderByType(mimeType);
 		Log.i("JWJWJW initVideoEncoder", "MediaCodec.createEncoderByType "+mimeType);
-		MediaFormat mediaFormat = MediaFormat.createVideoFormat(mimeType, 640, 480);
+		MediaFormat mediaFormat = MediaFormat.createVideoFormat(mimeType, width, height);
 		mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 3000000);
 		mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
 	    mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, findColorFormat(mimeType));
@@ -185,7 +186,15 @@ public class MakeMVActivity extends Activity {
 	    return colorFormat;
 	}
 	
+	private void destroyVideoEncoder() 
+	{
+		videoEncoder.stop();
+		videoEncoder.release();
+		videoEncoder = null;
+	}
+	
 	private MediaCodec videoDecoder;
+	boolean isInitVideoEncoder = false;
 	private void appendMV(String path)
 	{
 		String mime = null;
@@ -196,17 +205,21 @@ public class MakeMVActivity extends Activity {
 		Log.v("JWJWJW", "appendMV : " + path);
 		extractor.setDataSource(path);
 		
-		//int numTracks = extractor.getTrackCount();		
-		int i = 0;
-		mediaFormat = extractor.getTrackFormat(i);
+		int tracks = extractor.getTrackCount();		
+		for (int i = 0; i < tracks ; i++)
+		{
+			mediaFormat = extractor.getTrackFormat(i);
+			mime = mediaFormat.getString(MediaFormat.KEY_MIME);
+			if (mime.startsWith("video/")){
+				extractor.selectTrack(i);
+				Log.v("JWJWJW", "numTracks" + i + ": " + mime + 
+						":KEY_WIDTH:" +mediaFormat.getInteger(MediaFormat.KEY_WIDTH) + 
+						":KEY_HEIGHT:" +mediaFormat.getInteger(MediaFormat.KEY_HEIGHT));
 				
-		extractor.selectTrack(0);
-		
-		mime = mediaFormat.getString(MediaFormat.KEY_MIME);
-		Log.i("JWJWJW", "numTracks" + i + ": " + mime + 
-				":KEY_WIDTH:" +mediaFormat.getInteger(MediaFormat.KEY_WIDTH) + 
-				":KEY_HEIGHT:" +mediaFormat.getInteger(MediaFormat.KEY_HEIGHT));
-				
+			}			
+			break;
+		}
+							
 		videoDecoder = MediaCodec.createDecoderByType(mime);
 		videoDecoder.configure(mediaFormat, null, null, 0);
 		videoDecoder.start();
@@ -218,12 +231,13 @@ public class MakeMVActivity extends Activity {
 		boolean outEOS = false;
 		final long kTimeOutUs = 10000;
 		MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-
-		initVideoEncoder(mime);
-		Log.d("JWJWJW", "init ok");
 		
-		while (!outEOS)
-		{
+		if(!isInitVideoEncoder ) {
+			initVideoEncoder(mime, mediaFormat.getInteger(MediaFormat.KEY_WIDTH), mediaFormat.getInteger(MediaFormat.KEY_HEIGHT));
+			Log.d("JWJWJW", "init ok");
+			isInitVideoEncoder = true;
+		}
+		while (!outEOS)	{
 			if(!inEOS) {
 				int inBufIdx = videoDecoder.dequeueInputBuffer(kTimeOutUs);
 				//Log.d("JWJWJW", "inBufIdx:" + inBufIdx);
@@ -235,8 +249,7 @@ public class MakeMVActivity extends Activity {
 					if(size < 0) {
 						Log.d("JWJWJW", "inEOS");
 						size = 0;						
-						inEOS = true;
-						//break;
+						inEOS = true;						
 					}else {
 						ptTimeUs = extractor.getSampleTime();
 					}
@@ -254,7 +267,7 @@ public class MakeMVActivity extends Activity {
 				ByteBuffer buf = outputBuffers[outBufIdx];
 				Log.d("JWJWJW", "info.offset :" + info.offset + "info.size :" + info.size);
 				buf.position(info.offset);
-				buf.limit(/*info.offset +*/ info.size);
+				buf.limit(info.size);
 				
 				//debugDumpWrite(buf);
 				writeVideoData(buf);
@@ -284,10 +297,7 @@ public class MakeMVActivity extends Activity {
 		}
 		videoDecoder.stop();
 		videoDecoder.release();
-		videoDecoder = null;
-		
-		
-	
+		videoDecoder = null;	
 	}
 	void writeVideoData(ByteBuffer input)
 	{
@@ -325,7 +335,7 @@ public class MakeMVActivity extends Activity {
 			m.addTrack(video);
 			//m.addTrack(audio);
 			IsoFile out = new DefaultMp4Builder().build(m);
-			FileOutputStream fos = new FileOutputStream(new File("/sdcard/output.mp4"));
+			FileOutputStream fos = new FileOutputStream(new File(outputMV));
 			out.getBox(fos.getChannel());
 			fos.close();
 		} catch (FileNotFoundException e) {
