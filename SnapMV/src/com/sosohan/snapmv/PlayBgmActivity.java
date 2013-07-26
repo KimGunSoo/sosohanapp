@@ -1,14 +1,19 @@
 package com.sosohan.snapmv;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 import android.view.Menu;
@@ -21,19 +26,24 @@ import android.widget.Toast;
 
 public class PlayBgmActivity extends Activity {
 	final static String BGM_TAG = "PlayBgmActivity";
+	final static boolean DEBUG = true;
+
+	private static ArrayList<String> bgmList = new ArrayList<String>();
+	private static String bgmPath = null;
 
 	private ListView bgmListView;
-	private ArrayList<String> bgmList = new ArrayList<String>();
 	private ArrayAdapter<String> adapter;
-	private String bgm_path;
-
+	private MediaPlayer audioPlayer = null;
+	
+	private String selectedBGMPath = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_play_bgm);
 
-		bmgFileLoading();
 		initListView();
+		audioPlayer = new MediaPlayer();
 	}
 
 	private void initListView() {
@@ -46,43 +56,45 @@ public class PlayBgmActivity extends Activity {
 		bgmListView.setOnItemClickListener(clickListener);
 	}
 
-	private void bmgFileLoading() {
-		AssetManager am = this.getAssets();
+	public static void bgmFileLoading(Context ctx) {
 		String[] itemList = null;
 		InputStream in = null;
 		OutputStream out = null;
-		File bgm_directory;
+		AssetManager am = ctx.getAssets();
 
-		bgm_path = this.getFilesDir().getPath().toString() + "/bgm";
-		bgm_directory = new File(bgm_path);
-		
-		if(!bgm_directory.exists()) {
+		bgmPath = ctx.getFilesDir().getPath().toString();
 
-			try {
-				itemList = am.list("bgm");
+		try {
+			itemList = am.list("bgm");
 
-				for(int i=0; i<itemList.length; i++) {
-					Log.d(BGM_TAG,"item  = " + itemList[i] );
+			for(int i=0; i<itemList.length; i++) {
+				if(DEBUG) Log.d(BGM_TAG,"item  = " + itemList[i] + ", bgmPath="+bgmPath );
+
+				File f = new File(bgmPath +"/"+ itemList[i]);
+
+				if(f.createNewFile()) {
+					out = new FileOutputStream(bgmPath +"/"+ itemList[i]);
 					in = am.open("bgm/"+itemList[i]);
-					out = new FileOutputStream(bgm_path + itemList[i]);
+
 					copyFile(in, out);
-					bgmList.add(itemList[i]);
+					
+					in.close();
+					in = null;
+					out.flush();
+					out.close();
+					out = null;
 				}
 
-				in.close();
-				in = null;
-				out.flush();
-				out.close();
-				out = null;
-			} catch (IOException e) {
-				Log.d(BGM_TAG,"fileLoading() fail");
-				e.printStackTrace();
+				bgmList.add(itemList[i]);
 			}
-
+			
+		} catch (IOException e) {
+			Log.d(BGM_TAG,"fileLoading() fail");
+			e.printStackTrace();
 		}
 	}
 
-	private void copyFile(InputStream in, OutputStream out) throws IOException {
+	private static void copyFile(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[1024];
 		int ret = 0;
 
@@ -103,9 +115,48 @@ public class PlayBgmActivity extends Activity {
 			String str = (String)adapter.getItem(position);
 			Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
 
-			//TODO: play the BGM selected by user.
+			if(audioPlayer.isPlaying()) {
+				if(DEBUG) Log.d(BGM_TAG,"isPlaying false case");
+				audioPlayer.stop();
+			}
+
+			audioPlayer.reset();
+
+			// Play the BGM.
+			playBGM(str);
+		}
+
+		private void playBGM(String bgmName) {
+			selectedBGMPath = bgmPath +"/"+ bgmName;
+			if(DEBUG) Log.d(BGM_TAG,"BGM path= " + selectedBGMPath);
+
+			try {
+				FileInputStream fis = new FileInputStream(selectedBGMPath);
+				FileDescriptor fd = fis.getFD();
+				audioPlayer.setDataSource(fd);
+				audioPlayer.prepare();
+				audioPlayer.start();
+				fis.close();
+			} catch (FileNotFoundException e) {
+				Log.d(BGM_TAG,"playBGM() fail : FileNotFoundException");
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.d(BGM_TAG,"playBGM() fail : IOException");
+				e.printStackTrace();
+			}
 		}
 	};
+
+	@Override
+	protected void onPause() {
+		if(audioPlayer.isPlaying()) {
+			if(DEBUG) Log.d(BGM_TAG,"isPlaying false case");
+			audioPlayer.stop();
+			audioPlayer.reset();
+		}
+
+		super.onPause();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
