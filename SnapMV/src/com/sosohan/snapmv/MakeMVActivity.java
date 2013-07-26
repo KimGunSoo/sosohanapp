@@ -13,12 +13,10 @@ import java.util.ArrayList;
 
 import com.coremedia.iso.IsoFile;
 import com.googlecode.mp4parser.authoring.Movie;
+import com.googlecode.mp4parser.authoring.Track;
 import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import com.googlecode.mp4parser.authoring.tracks.H264TrackImpl;
-
-
-
-
 
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -40,6 +38,8 @@ public class MakeMVActivity extends Activity {
 	
 	private SnapFileWriter debugFile = null;
 	private final String intermediateVideo = "/sdcard/snap.h264";
+	
+	private String selectedAudio = "/sdcard/exam.m4a";
 	private final String outputMV = "/sdcard/DCIM/snap.mp4";
 	private void debugDumpOpen()
 	{	
@@ -330,10 +330,11 @@ public class MakeMVActivity extends Activity {
 		H264TrackImpl video;
 		try {
 			video = new H264TrackImpl(new BufferedInputStream(new FileInputStream(intermediateVideo)));
-			
+			Movie m4aAudio = new MovieCreator().build(new FileInputStream(selectedAudio).getChannel());
+			Track audio = m4aAudio.getTracks().get(0);
 			Movie m = new Movie();
 			m.addTrack(video);
-			//m.addTrack(audio);
+			m.addTrack(audio);
 			IsoFile out = new DefaultMp4Builder().build(m);
 			FileOutputStream fos = new FileOutputStream(new File(outputMV));
 			out.getBox(fos.getChannel());
