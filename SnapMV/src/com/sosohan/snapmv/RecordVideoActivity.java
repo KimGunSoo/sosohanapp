@@ -101,16 +101,16 @@ public class RecordVideoActivity extends Activity {
 				{
 					//array.add("/sdcard/DCIM/sosohan0.mp4");
 					//array.add("/sdcard/DCIM/sosohan1.mp4");	
-					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
-					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
-					//array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
+					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
+					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
+					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
 //					array.add("/sdcard/DCIM/Camera/20130717_120750.3gp");
 //					array.add("/sdcard/DCIM/Camera/20130718_173307.3gp");
 //					array.add("/sdcard/DCIM/Camera/20130717_120236.3gp");
-					array.add("/sdcard/DCIM/Camera/VID_20130719_170343.3gp");
-					array.add("/sdcard/DCIM/Camera/VID_20130719_180532.3gp");
-					array.add("/sdcard/DCIM/Camera/VID_20130719_180544.3gp");
-					array.add("/sdcard/DCIM/Camera/VID_20130717_165542.3gp");
+//					array.add("/sdcard/DCIM/Camera/VID_20130719_170343.3gp");
+//					array.add("/sdcard/DCIM/Camera/VID_20130719_180532.3gp");
+//					array.add("/sdcard/DCIM/Camera/VID_20130719_180544.3gp");
+//					array.add("/sdcard/DCIM/Camera/VID_20130717_165542.3gp");
 										
 					for(int i=0 ; i < array.size() ; i++)	{
 						Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
@@ -118,31 +118,6 @@ public class RecordVideoActivity extends Activity {
 						thumbnailArray.get(i).setImageBitmap(thumbnail);			
 					}
 					
-					String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-					Log.e("hjhjhj", "path : " + path);
-					Bitmap  b = Bitmap.createBitmap(640, 480, Bitmap.Config.RGB_565);
-					View view = (View)findViewById(R.id.imageView0);
-					Paint whitePaint = new Paint();
-					whitePaint.setTextSize(30);
-					whitePaint.setColor(Color.WHITE);
-					try {
-						File f = new File(path+"/notes");
-
-						f.mkdir();
-						File f2 = new File(path + "/notes/"+"test"+".png");
-
-						Canvas c = new Canvas( b );
-						c.drawText("this is SnapMV test", 100, 300, whitePaint);
-						view.draw( c );
-						FileOutputStream fos = new FileOutputStream(f2);
-						if ( fos != null )
-						{
-							b.compress(Bitmap.CompressFormat.PNG, 100, fos ); 
-							fos.close();
-						}
-					} catch ( Exception e ) {
-						Log.e("testSaveView", "Exception: " + e.toString() ); 
-					}
 				}
 			}
 		};

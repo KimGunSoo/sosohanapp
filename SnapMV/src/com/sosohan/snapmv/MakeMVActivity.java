@@ -18,6 +18,8 @@ import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
 import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import com.googlecode.mp4parser.authoring.tracks.H264TrackImpl;
 
+
+
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
@@ -104,16 +106,17 @@ public class MakeMVActivity extends Activity {
 					
 					new Thread(new Runnable(){
 						public void run(){
-							//debugDumpOpen();
+							debugDumpOpen();
 							outputOpen();
 							for (int i = 0; i < decodingArray.size() ; i ++)
 							{
 								appendMV(decodingArray.get(i));
 							}
 							destroyVideoEncoder();
-							outputClose();
+							
 							makeMP4();
-							//debugDumpClose();
+							outputClose();
+							debugDumpClose();
 							finish();
 						}
 
@@ -178,7 +181,7 @@ public class MakeMVActivity extends Activity {
 	            colorFormat = format;
 	            break;
 	        default:
-	        	 Log.i("JWJWJW", "Skipping unsupported color format " + format);
+	        	 Log.e("JWJWJW", "Skipping unsupported color format " + format);
 	            break;
 	        }
 	    }
@@ -195,6 +198,7 @@ public class MakeMVActivity extends Activity {
 	
 	private MediaCodec videoDecoder;
 	boolean isInitVideoEncoder = false;
+	int stride, sliceHeight; 
 	private void appendMV(String path)
 	{
 		String mime = null;
@@ -212,7 +216,7 @@ public class MakeMVActivity extends Activity {
 			mime = mediaFormat.getString(MediaFormat.KEY_MIME);
 			if (mime.startsWith("video/")){
 				extractor.selectTrack(i);
-				Log.v("JWJWJW", "numTracks" + i + ": " + mime + 
+				Log.i("JWJWJW", "numTracks" + i + ": " + mime + 
 						":KEY_WIDTH:" +mediaFormat.getInteger(MediaFormat.KEY_WIDTH) + 
 						":KEY_HEIGHT:" +mediaFormat.getInteger(MediaFormat.KEY_HEIGHT));
 				
@@ -261,16 +265,29 @@ public class MakeMVActivity extends Activity {
 				}
 			}
 			int res = videoDecoder.dequeueOutputBuffer(info, kTimeOutUs);
-			Log.d("JWJWJW", "outBufIdx (?) :" + res);
+			//Log.d("JWJWJW", "outBufIdx (?) :" + res);
 			if (res >= 0) {
 				int outBufIdx = res;
 				ByteBuffer buf = outputBuffers[outBufIdx];
-				Log.d("JWJWJW", "info.offset :" + info.offset + "info.size :" + info.size);
+				Log.d("JWJWJW", "capacity :" + buf.capacity() + "--info.size :" + info.size);
 				buf.position(info.offset);
-				buf.limit(info.size);
-				
-				//debugDumpWrite(buf);
+				buf.limit(3133440);				
+				debugDumpWrite(buf);
 				writeVideoData(buf);
+//				buf.position(info.offset);
+
+//				int chromaStride = stride/2;
+//				int frameSize = stride*sliceHeight + 2*chromaStride*sliceHeight/2;				
+//				Log.d("JWJWJW", "frameSize :" + frameSize + "info.size :" + info.size);
+//				buf.limit(info.size - frameSize);
+//				ByteBuffer buf1 = buf.slice();
+//				writeVideoData(buf1);
+//				
+//				buf.position(info.size - frameSize);
+//				buf.limit(info.size);
+//				ByteBuffer buf2 = buf.slice();
+//				writeVideoData(buf2);
+				
 				videoDecoder.releaseOutputBuffer(outBufIdx, false /*render*/);
 				if((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0)
 				{
@@ -283,6 +300,8 @@ public class MakeMVActivity extends Activity {
 			} else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED){
 				MediaFormat oformat = videoDecoder.getOutputFormat();
 				Log.d("JWJWJW","INFO_OUTPUT_FORMAT_CHANGED" + oformat);
+				stride = oformat.getInteger(MediaFormat.KEY_WIDTH);
+				sliceHeight = oformat.getInteger(MediaFormat.KEY_HEIGHT);
 			}
 //			else if (res == MediaCodec.INFO_TRY_AGAIN_LATER){
 //				Log.d("JWJWJW","INFO_TRY_AGAIN_LATER" );
@@ -305,7 +324,9 @@ public class MakeMVActivity extends Activity {
 		ByteBuffer[] outputBuffers = videoEncoder.getOutputBuffers();
 		int inputBufferIndex = videoEncoder.dequeueInputBuffer(-1);
 		if (inputBufferIndex >= 0) {
+			
 			ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
+			Log.i("JWJWJW AvcEncoder", "inputBufferlimit:" + inputBuffer.limit()+"//inputlimit:"+ input.limit());
 			inputBuffer.clear();
 			inputBuffer.put(input);
 			videoEncoder.queueInputBuffer(inputBufferIndex, 0, input.limit(), 0, 0);
@@ -313,16 +334,16 @@ public class MakeMVActivity extends Activity {
 
 		MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 		int outputBufferIndex = videoEncoder.dequeueOutputBuffer(bufferInfo,0);
-		Log.i("JWJWJW AvcEncoder", "outputBufferIndex:" + outputBufferIndex);
+		//Log.i("JWJWJW AvcEncoder", "outputBufferIndex:" + outputBufferIndex);
 		while (outputBufferIndex >= 0) {
 			ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
+			Log.i("JWJWJW AvcEncoder", "outputBufferlimit:" + outputBuffer.limit());
 			outputBuffer.position(bufferInfo.offset);
 			outputBuffer.limit(bufferInfo.size);
 			outputWrite(outputBuffer);
 			videoEncoder.releaseOutputBuffer(outputBufferIndex, false);
 			outputBufferIndex = videoEncoder.dequeueOutputBuffer(bufferInfo, 0);
-			Log.i("JWJWJW AvcEncoder", bufferInfo.size + " bytes written offset :"
-					+ bufferInfo.offset );
+			Log.i("JWJWJW AvcEncoder", bufferInfo.size + " bytes written" );
 		}
 	}
 	void makeMP4()
@@ -334,7 +355,7 @@ public class MakeMVActivity extends Activity {
 			Track audio = m4aAudio.getTracks().get(0);
 			Movie m = new Movie();
 			m.addTrack(video);
-			m.addTrack(audio);
+			//m.addTrack(audio);
 			IsoFile out = new DefaultMp4Builder().build(m);
 			FileOutputStream fos = new FileOutputStream(new File(outputMV));
 			out.getBox(fos.getChannel());
