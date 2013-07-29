@@ -1,5 +1,7 @@
 package com.sosohan.snapmv;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 
@@ -14,6 +16,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -111,6 +116,32 @@ public class RecordVideoActivity extends Activity {
 						Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
 						Log.e("JWJWJW", "onResume = " + array.get(i));
 						thumbnailArray.get(i).setImageBitmap(thumbnail);			
+					}
+					
+					String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+					Log.e("hjhjhj", "path : " + path);
+					Bitmap  b = Bitmap.createBitmap(640, 480, Bitmap.Config.RGB_565);
+					View view = (View)findViewById(R.id.imageView0);
+					Paint whitePaint = new Paint();
+					whitePaint.setTextSize(30);
+					whitePaint.setColor(Color.WHITE);
+					try {
+						File f = new File(path+"/notes");
+
+						f.mkdir();
+						File f2 = new File(path + "/notes/"+"test"+".png");
+
+						Canvas c = new Canvas( b );
+						c.drawText("this is SnapMV test", 100, 300, whitePaint);
+						view.draw( c );
+						FileOutputStream fos = new FileOutputStream(f2);
+						if ( fos != null )
+						{
+							b.compress(Bitmap.CompressFormat.PNG, 100, fos ); 
+							fos.close();
+						}
+					} catch ( Exception e ) {
+						Log.e("testSaveView", "Exception: " + e.toString() ); 
 					}
 				}
 			}

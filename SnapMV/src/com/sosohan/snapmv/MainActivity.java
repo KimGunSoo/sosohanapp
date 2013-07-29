@@ -2,7 +2,9 @@ package com.sosohan.snapmv;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -13,10 +15,11 @@ public class MainActivity extends Activity {
 	private Button btnVideoRecordActivity;
 	private Button btnPlayBgmActivity;
 	private View.OnClickListener btnClickListener;
+	private Context mContext = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_main);
 		btnVideoRecordActivity	= (Button) findViewById(R.id.video_record_A_btn);
 		btnPlayBgmActivity		= (Button) findViewById(R.id.play_bgm_A_btn);
@@ -38,9 +41,14 @@ public class MainActivity extends Activity {
 				
 			}
 		};
-		
-        btnVideoRecordActivity.setOnClickListener(btnClickListener);       
-        btnPlayBgmActivity.setOnClickListener(btnClickListener); 
+
+		// BGM loading
+		if (mContext == null)
+			mContext = getApplicationContext();
+		PlayBgmActivity.bgmFileLoading(mContext);
+
+		btnVideoRecordActivity.setOnClickListener(btnClickListener);       
+        btnPlayBgmActivity.setOnClickListener(btnClickListener);
     }
 	/*@Override
 	public void onConfigurationChanged(Configuration newConfig){
