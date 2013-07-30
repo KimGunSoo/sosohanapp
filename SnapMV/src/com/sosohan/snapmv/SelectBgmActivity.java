@@ -56,7 +56,7 @@ public class SelectBgmActivity extends Activity {
 				if (v == btnMakeMVActivity) {
 					Intent intent = new Intent(SelectBgmActivity.this,
 							MakeMVActivity.class);
-					intent.putStringArrayListExtra("videoPaths", passVideoList);
+					intent.putStringArrayListExtra("videolist", passVideoList);
 					intent.putExtra("audioPath",selectedBGMPath);
 					startActivity(intent);
 				}				

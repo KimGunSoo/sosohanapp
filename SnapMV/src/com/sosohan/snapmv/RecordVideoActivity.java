@@ -121,7 +121,7 @@ public class RecordVideoActivity extends Activity {
 										
 					for(int i=0 ; i < array.size() ; i++)	{
 						Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
-						Log.e("JWJWJW", "onResume = " + array.get(i));
+						Log.e("JWJWJW", "btnDebug_add_mv = " + array.get(i));
 						thumbnailArray.get(i).setImageBitmap(thumbnail);			
 					}
 					Intent intent = new Intent(RecordVideoActivity.this, MakeMVActivity.class);

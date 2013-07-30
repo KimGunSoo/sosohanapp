@@ -87,7 +87,7 @@ public class MakeMVActivity extends Activity {
 		
 		btnTest = (Button) findViewById(R.id.test_btn);		
 		Intent intent = getIntent();
-		videoPaths = (ArrayList<String>) intent.getSerializableExtra("videoPaths");
+		videoPaths = (ArrayList<String>) intent.getSerializableExtra("videolist");
 		audioPath = (String) intent.getExtras().getString("audioPath");
 		Log.i(tag, videoPaths + "," + audioPath);
 		btnTestListener = new View.OnClickListener() {
@@ -106,7 +106,13 @@ public class MakeMVActivity extends Activity {
 							{
 								appendMV(videoPaths.get(i));
 							}
-							makeMV();							
+							makeMV();
+							videoPaths.clear();
+							videoPaths.add("outputMV");
+							Intent intent = new Intent(MakeMVActivity.this,
+									PreviewActivity.class);
+							intent.putStringArrayListExtra("videolist", videoPaths);	
+							startActivity(intent);					
 							finish();
 						}						
 					}).start();						
