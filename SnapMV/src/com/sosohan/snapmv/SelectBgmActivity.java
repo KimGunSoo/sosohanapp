@@ -40,7 +40,7 @@ public class SelectBgmActivity extends Activity {
 	
 	private String selectedBGMPath = null;
 	private Button btnMakeMVActivity;
-	private View.OnClickListener btnClickListener;
+	private View.OnClickListener btnBgmClickListener;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class SelectBgmActivity extends Activity {
 		btnMakeMVActivity	= (Button) findViewById(R.id.make_mv_A_btn);		
 		passVideoList = (ArrayList<String>) intent.getSerializableExtra("videolist");
 		
-		btnClickListener = new View.OnClickListener() {
+		btnBgmClickListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {				
 				if (v == btnMakeMVActivity) {
@@ -62,7 +62,7 @@ public class SelectBgmActivity extends Activity {
 				}				
 			}
 		};
-		btnMakeMVActivity.setOnClickListener(btnClickListener);
+		btnMakeMVActivity.setOnClickListener(btnBgmClickListener);
 		initListView();
 		audioPlayer = new MediaPlayer();
 	}
