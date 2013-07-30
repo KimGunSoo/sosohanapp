@@ -6,6 +6,7 @@ import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.MediaRecorder.OnInfoListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
@@ -21,7 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-public class CameraActivity extends Activity implements SurfaceHolder.Callback {
+public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener {
 	String cam_tag = "CameraActivity";
 	private Button btnCamera;
 	private View.OnClickListener btnCameraClickListener;
@@ -30,10 +31,13 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 	Camera camera;
 	MediaRecorder recorder;
 	SurfaceHolder holder;
+	
+	boolean recording;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera);
+		recording = false;
 		
 		camSurfaceView = (SurfaceView) findViewById(R.id.camSurfaceView);
 		holder = camSurfaceView.getHolder();
@@ -41,10 +45,21 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);//this is a deprecated method, is not required after 3.0 
         		
 		btnCamera = (Button) findViewById(R.id.camera_test_btn);
+		
 		btnCameraClickListener = new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {				
-				start();			
+			public void onClick(View v) {	
+				
+				if(!recording){
+					start();
+					recording = true;
+				} 
+//				else {					
+//					btnCamera.setText("stop");
+//					recording = false;
+//					stop();					
+//				}
+				
 			}			
 		};
 		btnCamera.setOnClickListener(btnCameraClickListener);
@@ -56,6 +71,15 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 		Log.v(cam_tag, "onResume");		
 		
 	}
+	@Override
+	public void onInfo(MediaRecorder mr, int what, int extra) {
+		// TODO Auto-generated method stub
+		if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+			Log.v("cam_tag","Maximum Duration Reached"); 
+			mr.stop();
+		}
+		recording = false;
+	}
 	private void start() {
 		Log.v(cam_tag, "start");		
 		try {
@@ -63,13 +87,17 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 			camera.unlock();
 			recorder.setCamera(camera);
 			recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-			//recorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+			//recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+			
+//			CamcorderProfile camcorderProfile_HQ = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+//			recorder.setProfile(camcorderProfile_HQ);
 			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-
-			recorder.setVideoSize(320,240);
+			
+			//recorder.setVideoSize(320,240);
 //			mMediaRecorder.setVideoFrameRate(15);
-			recorder.setMaxDuration(3000);			
+			recorder.setMaxDuration(3000);	
+			recorder.setOnInfoListener(this);
 			recorder.setOutputFile("/sdcard/DCIM/jw.mp4"); 
 			recorder.setPreviewDisplay(holder.getSurface());
 			recorder.prepare();
@@ -82,7 +110,12 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 			e.printStackTrace();
 		}
 	}
-	
+	private void stop() {
+		Log.v(cam_tag, "stop");		
+		recorder.stop();
+		recorder.release();
+		finish();
+	}
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
@@ -144,4 +177,5 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 		getMenuInflater().inflate(R.menu.camera, menu);
 		return true;
 	}
+	
 }
