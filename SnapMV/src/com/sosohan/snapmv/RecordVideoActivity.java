@@ -126,6 +126,8 @@ public class RecordVideoActivity extends Activity {
 					}
 					Intent intent = new Intent(RecordVideoActivity.this, MakeMVActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
+					intent.putExtra("audioPath", "/data/data/com.sosohan.snapmv/files/Brad_Sucks_-_Dirtbag_crop.m4a");
+
 					startActivity(intent);
 				}
 				else if (v == btnDebug_make_text_image)

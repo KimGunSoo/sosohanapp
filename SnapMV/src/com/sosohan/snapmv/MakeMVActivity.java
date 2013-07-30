@@ -108,7 +108,7 @@ public class MakeMVActivity extends Activity {
 							}
 							makeMV();
 							videoPaths.clear();
-							videoPaths.add("outputMV");
+							videoPaths.add(outputMV);
 							Intent intent = new Intent(MakeMVActivity.this,
 									PreviewActivity.class);
 							intent.putStringArrayListExtra("videolist", videoPaths);	
