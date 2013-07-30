@@ -34,7 +34,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
-            android:name="com.sosohan.snapmv.PlayBgmActivity"
+            android:name="com.sosohan.snapmv.SelectBgmActivity"
             android:label="@string/title_activity_play_bgm" >
         </activity>
         <activity
@@ -45,6 +45,14 @@
         <activity
             android:name="com.sosohan.snapmv.MakeMVActivity"
             android:label="@string/title_activity_make_mv" >
+        </activity>
+        <activity
+            android:name="com.sosohan.snapmv.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="com.sosohan.snapmv.CameraActivity"
+            android:label="@string/title_activity_camera" >
         </activity>
     </application>
 

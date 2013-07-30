@@ -16,7 +16,16 @@
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Record"
+        android:text="Record for debug"
+        android:textColor="#444444"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/camera_A_btn"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Capture"
         android:textColor="#444444"
         android:textSize="20sp" />
 
@@ -80,20 +89,13 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/preview_btn"
+        android:id="@+id/preview_A_btn"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Preview"
         android:textColor="#444444"
         android:textSize="20sp" />
-
-    <ImageButton
-        android:id="@+id/imageButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_weight="9.36"
-        android:src="@drawable/ic_launcher" />
 
     <Button
         android:id="@+id/done_btn"
@@ -110,6 +112,22 @@
         android:layout_weight="10"
         android:gravity="center"
         android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/tmp_debug_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_weight="9.36"
+            android:src="@drawable/ic_launcher"
+            android:text="for test and debug" />
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_weight="9.36"
+            android:src="@drawable/ic_launcher" />
+
     </LinearLayout>
 
 </LinearLayout>

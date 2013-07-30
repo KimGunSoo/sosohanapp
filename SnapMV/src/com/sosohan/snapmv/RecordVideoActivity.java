@@ -34,15 +34,16 @@ public class RecordVideoActivity extends Activity {
 	private ArrayList<String> array = new ArrayList<String>();
 		
 	private Button btnVideoRecord;
+	private Button btnCamera;
 	private Button btnPreview;
 	private Button btnDone;	
 	private View.OnClickListener btnClickListener;
 	
 	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();
 	private int videoIndex = 0;
-	private String videoFilename;
 	
-	private ImageButton btnDebug;
+	private ImageButton btnDebug_add_mv;
+	private Button btnDebug_make_text_image;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +52,12 @@ public class RecordVideoActivity extends Activity {
 		setContentView(R.layout.activity_record_video);       
 		
 		btnVideoRecord = (Button) findViewById(R.id.record_btn);
-		btnPreview = (Button) findViewById(R.id.preview_btn);
+		btnCamera = (Button) findViewById(R.id.camera_A_btn);
+		btnPreview = (Button) findViewById(R.id.preview_A_btn);
 		btnDone = (Button) findViewById(R.id.done_btn);
 		
-		btnDebug = (ImageButton) findViewById(R.id.imageButton1);
+		btnDebug_add_mv = (ImageButton) findViewById(R.id.imageButton1);
+		btnDebug_make_text_image = (Button) findViewById(R.id.tmp_debug_btn);
 		
 		//thumbnailArray = (ImageView) findViewById(R.id.imageView1);
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
@@ -87,28 +90,32 @@ public class RecordVideoActivity extends Activity {
 						intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 3);
 						startActivityForResult(intent, REC_MOV);
 					}
+				}else if(v == btnCamera)
+				{
+					Intent intent = new Intent(RecordVideoActivity.this,
+							CameraActivity.class);
+					startActivity(intent);
 				}else if (v == btnPreview && !array.isEmpty()) {					
 					Intent intent = new Intent(RecordVideoActivity.this, PreviewActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
 					startActivity(intent);
-				}
-				else if (v == btnDone){
-					Intent intent = new Intent(RecordVideoActivity.this, MakeMVActivity.class);
+				}else if (v == btnDone){
+					Intent intent = new Intent(RecordVideoActivity.this,
+							SelectBgmActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
-					startActivity(intent);
-				}
-				else if (v == btnDebug )
+					startActivity(intent);					
+				}else if (v == btnDebug_add_mv )
 				{
 					//array.add("/sdcard/DCIM/sosohan0.mp4");
 					//array.add("/sdcard/DCIM/sosohan1.mp4");	
-					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
-					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
-					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
+//					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
+//					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
+//					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
 //					array.add("/sdcard/DCIM/Camera/20130717_120750.3gp");
 //					array.add("/sdcard/DCIM/Camera/20130718_173307.3gp");
 //					array.add("/sdcard/DCIM/Camera/20130717_120236.3gp");
-//					array.add("/sdcard/DCIM/Camera/VID_20130719_170343.3gp");
-//					array.add("/sdcard/DCIM/Camera/VID_20130719_180532.3gp");
+					array.add("/sdcard/DCIM/Camera/VID_20130719_170343.3gp");
+					array.add("/sdcard/DCIM/Camera/VID_20130719_180532.3gp");
 //					array.add("/sdcard/DCIM/Camera/VID_20130719_180544.3gp");
 //					array.add("/sdcard/DCIM/Camera/VID_20130717_165542.3gp");
 										
@@ -117,16 +124,48 @@ public class RecordVideoActivity extends Activity {
 						Log.e("JWJWJW", "onResume = " + array.get(i));
 						thumbnailArray.get(i).setImageBitmap(thumbnail);			
 					}
-					
+					Intent intent = new Intent(RecordVideoActivity.this, MakeMVActivity.class);
+					intent.putStringArrayListExtra("videolist", array);	
+					startActivity(intent);
 				}
+				else if (v == btnDebug_make_text_image)
+				{
+					String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+					Log.e("hjhjhj", "path : " + path);
+					Bitmap  b = Bitmap.createBitmap(640, 480, Bitmap.Config.RGB_565);
+					View view = (View)findViewById(R.id.imageView0);
+					Paint whitePaint = new Paint();
+					whitePaint.setTextSize(30);
+					whitePaint.setColor(Color.WHITE);
+					try {
+						File f = new File(path+"/notes");
+
+						f.mkdir();
+						File f2 = new File(path + "/notes/"+"test"+".png");
+
+						Canvas c = new Canvas( b );
+						c.drawText("this is SnapMV test", 100, 300, whitePaint);
+						view.draw( c );
+						FileOutputStream fos = new FileOutputStream(f2);
+						if ( fos != null )
+						{
+							b.compress(Bitmap.CompressFormat.PNG, 100, fos ); 
+							fos.close();
+						}
+					} catch ( Exception e ) {
+						Log.e("testSaveView", "Exception: " + e.toString() ); 
+					}
+				} 
 			}
 		};
 		
 		btnVideoRecord.setOnClickListener(btnClickListener);
+		btnCamera.setOnClickListener(btnClickListener);
 		btnPreview.setOnClickListener(btnClickListener);
 		btnDone.setOnClickListener(btnClickListener);
 		
-		btnDebug.setOnClickListener(btnClickListener);
+		btnDebug_add_mv.setOnClickListener(btnClickListener);
+		btnDebug_make_text_image.setOnClickListener(btnClickListener);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)

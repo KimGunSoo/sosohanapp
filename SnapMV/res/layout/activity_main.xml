@@ -26,24 +26,26 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="SnapMV"
+            android:textColor="#ffd700"
             android:textSize="50dp" />
 
     </LinearLayout>
 
     <Button
-        android:id="@+id/video_record_A_btn"
+        android:id="@+id/record_video_A_btn"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:text="Make snap movie"
+        android:text="Make snap MV"
         android:textColor="#444444"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/play_bgm_A_btn"
+        android:id="@+id/setting_A_btn"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:text="play bgm activity start"
-        android:textColor="#444444" />
+        android:text="Settings"
+        android:textColor="#444444"
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

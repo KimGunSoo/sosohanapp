@@ -12,8 +12,8 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-	private Button btnVideoRecordActivity;
-	private Button btnPlayBgmActivity;
+	private Button btnRecordVideoActivity;
+	private Button btnSettingActivity;
 	private View.OnClickListener btnClickListener;
 	private Context mContext = null;
 	@Override
@@ -21,21 +21,20 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		btnVideoRecordActivity	= (Button) findViewById(R.id.video_record_A_btn);
-		btnPlayBgmActivity		= (Button) findViewById(R.id.play_bgm_A_btn);
+		btnRecordVideoActivity	= (Button) findViewById(R.id.record_video_A_btn);
+		btnSettingActivity		= (Button) findViewById(R.id.setting_A_btn);
 		
 		btnClickListener = new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (v == btnVideoRecordActivity) {
+				if (v == btnRecordVideoActivity) {
 					Intent intent = new Intent(MainActivity.this,
 							RecordVideoActivity.class);
 					startActivity(intent);
-				}else if (v == btnPlayBgmActivity) {
+				}else if (v == btnSettingActivity) {
 					Intent intent = new Intent(MainActivity.this,
-							PlayBgmActivity.class);
+							SettingsActivity.class);
 					startActivity(intent);
 				}
 				
@@ -45,22 +44,12 @@ public class MainActivity extends Activity {
 		// BGM loading
 		if (mContext == null)
 			mContext = getApplicationContext();
-		PlayBgmActivity.bgmFileLoading(mContext);
+		SelectBgmActivity.bgmFileLoading(mContext);
 
-		btnVideoRecordActivity.setOnClickListener(btnClickListener);       
-        btnPlayBgmActivity.setOnClickListener(btnClickListener);
+		btnRecordVideoActivity.setOnClickListener(btnClickListener);       
+        btnSettingActivity.setOnClickListener(btnClickListener);
     }
-	/*@Override
-	public void onConfigurationChanged(Configuration newConfig){
-		super.onConfigurationChanged(newConfig);
-		
-		if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)
-			layout.setBackgroundResource(R.drawable.bg_portrait);
-		else if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-			layout.setBackgroundResource(R.drawable.bg_landscape);
-		
-		Log.e("JWJWJW","w/h changed");
-	}*/
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
