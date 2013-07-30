@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener {
 	String cam_tag = "CameraActivity";
 	private Button btnCamera;
@@ -75,8 +74,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	public void onInfo(MediaRecorder mr, int what, int extra) {
 		// TODO Auto-generated method stub
 		if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
-			Log.v("cam_tag","Maximum Duration Reached"); 
+			Log.v(cam_tag,"Maximum Duration Reached"); 
 			mr.stop();
+			recorder.release();
 		}
 		recording = false;
 	}
@@ -92,10 +92,12 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 //			CamcorderProfile camcorderProfile_HQ = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 //			recorder.setProfile(camcorderProfile_HQ);
 			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-			
-			//recorder.setVideoSize(320,240);
-//			mMediaRecorder.setVideoFrameRate(15);
+			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+			CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_480P);
+			Log.v(cam_tag,"w" + profile.videoFrameWidth + "/h"+ profile.videoFrameHeight); 
+			recorder.setVideoSize(profile.videoFrameWidth,profile.videoFrameHeight);
+			recorder.setVideoFrameRate(30);
+			recorder.setVideoEncodingBitRate(6000000);
 			recorder.setMaxDuration(3000);	
 			recorder.setOnInfoListener(this);
 			recorder.setOutputFile("/sdcard/DCIM/jw.mp4"); 
