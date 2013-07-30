@@ -73,7 +73,7 @@ public class SelectBgmActivity extends Activity {
 		bgmListView = (ListView)findViewById(R.id.bgmList);
 		bgmListView.setAdapter(adapter);
 		bgmListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
+		
 		bgmListView.setOnItemClickListener(clickListener);
 	}
 

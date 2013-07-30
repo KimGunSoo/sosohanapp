@@ -73,7 +73,6 @@ public class MakeMVActivity extends Activity {
 		}
 		outputFile.write(buf);
 	}
-
 	private ArrayList<String> videoPaths;
 	private String audioPath;
 	private Button btnTest;

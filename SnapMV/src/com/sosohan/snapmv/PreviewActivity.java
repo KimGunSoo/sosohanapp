@@ -25,11 +25,7 @@ public class PreviewActivity extends Activity {
 		Intent intent = getIntent();
 		
 		videoArray = (ArrayList<String>) intent.getSerializableExtra("videolist");
-		
-		//MediaController mediaController = new MediaController(this);
-		//mediaController.setAnchorView(previewView);
-		//previewView.setMediaController(mediaController);
-
+				
 		previewView.requestFocus();
 		
 		 MediaPlayer.OnCompletionListener mComplete = new MediaPlayer.OnCompletionListener() {					

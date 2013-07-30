@@ -2,15 +2,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg_train"
+    android:gravity="center"
     android:orientation="vertical" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
-        android:orientation="vertical" >
-    </LinearLayout>
-
     <Button
         android:id="@+id/record_btn"
         android:layout_width="240dp"
@@ -30,13 +23,14 @@
         android:textSize="20sp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
         <ImageView
             android:id="@+id/imageView0"
             android:layout_width="75dp"
             android:layout_height="75dp"
+            android:fitsSystemWindows="true"
             android:src="@android:drawable/ic_menu_help" />
 
         <ImageView
@@ -58,15 +52,15 @@
             android:src="@android:drawable/ic_menu_help" />
 	</LinearLayout>
 	 <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="75dp"
             android:layout_height="75dp"
+            android:focusable="true"
             android:src="@android:drawable/ic_menu_help" />
-    
 
         <ImageView
             android:id="@+id/imageView5"
@@ -92,7 +86,6 @@
         android:id="@+id/preview_A_btn"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:text="Preview"
         android:textColor="#444444"
         android:textSize="20sp" />
@@ -101,33 +94,24 @@
         android:id="@+id/done_btn"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:text="Done"
         android:textColor="#444444"
         android:textSize="20sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
-        android:gravity="center"
-        android:orientation="vertical" >
+  
 
         <Button
             android:id="@+id/tmp_debug_btn"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_weight="9.36"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_launcher"
             android:text="for test and debug" />
 
         <ImageButton
             android:id="@+id/imageButton1"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_weight="9.36"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_launcher" />
 
-    </LinearLayout>
 
 </LinearLayout>
