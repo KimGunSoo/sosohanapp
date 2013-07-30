@@ -8,12 +8,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context=".CameraActivity" >
-    
-	<Button
-        android:id="@+id/camera_test_btn"
+
+    <Button
+        android:id="@+id/on_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="camera_test_btn" />
+        android:text="On" />
+    
+	<Button
+	    android:id="@+id/camera_test_btn"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Start Recording" />
+
+	<Button
+	    android:id="@+id/off_btn"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="off" />
 
 	<SurfaceView
 	    android:id="@+id/camSurfaceView"
