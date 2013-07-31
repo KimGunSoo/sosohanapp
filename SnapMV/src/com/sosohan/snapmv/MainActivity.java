@@ -14,11 +14,13 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
+	private static final String TAG = "MainActivity";
 
 	private Button btnRecordVideoActivity;
 	private Button btnSettingActivity;
 	private View.OnClickListener btnClickListener;
 	private Context mContext = null;
+	private MediaDataPreference mMediaPref = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,18 @@ public class MainActivity extends Activity {
 		if (mContext == null)
 			mContext = getApplicationContext();
 		SelectBgmActivity.bgmLoadingThStart(mContext);
-    }
+
+		// For preference test.
+		String facebook_id;
+		mMediaPref = MediaDataPreference.getInstance(mContext);
+		facebook_id = mMediaPref.getFaceBookId();
+		if(facebook_id == null) {
+			mMediaPref.setFaceBookId("wish4679");
+			Log.d(TAG,"facebook id is not set");
+		} else {
+			Log.d(TAG,"facebook id is " + facebook_id);
+		}
+	}
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
