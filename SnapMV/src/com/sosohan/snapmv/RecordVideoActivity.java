@@ -33,7 +33,7 @@ public class RecordVideoActivity extends Activity {
 	public static final int REC_MOV = 1;
 	private ArrayList<String> array = new ArrayList<String>();
 		
-	private Button btnVideoRecord;
+	
 	private Button btnCamera;
 	private Button btnPreview;
 	private Button btnDone;	
@@ -51,7 +51,6 @@ public class RecordVideoActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_record_video);       
 		
-		btnVideoRecord = (Button) findViewById(R.id.record_btn);
 		btnCamera = (Button) findViewById(R.id.camera_A_btn);
 		btnPreview = (Button) findViewById(R.id.preview_A_btn);
 		btnDone = (Button) findViewById(R.id.done_btn);
@@ -75,22 +74,7 @@ public class RecordVideoActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (v == btnVideoRecord) {
-					if(videoIndex < 8)
-					{
-						final ContentValues values = new ContentValues();
-						//videoFilename = path + "/sosohan"+videoIndex+".mp4";
-						//videoFilename = "/sdcard/DCIM/sosohan"+videoIndex+".mp4";
-						//values.put(MediaStore.Video.Media.DATA, videoFilename);
-						//captureMediaUri = getContentResolver().insert(
-						//		MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
-						final Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-						//intent.putExtra(MediaStore.EXTRA_OUTPUT, captureMediaUri);
-						intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 3);
-						startActivityForResult(intent, REC_MOV);
-					}
-				}else if(v == btnCamera)
+				if(v == btnCamera)
 				{
 					Intent intent = new Intent(RecordVideoActivity.this,
 							CameraActivity.class);
@@ -161,13 +145,22 @@ public class RecordVideoActivity extends Activity {
 			}
 		};
 		
-		btnVideoRecord.setOnClickListener(btnClickListener);
 		btnCamera.setOnClickListener(btnClickListener);
 		btnPreview.setOnClickListener(btnClickListener);
 		btnDone.setOnClickListener(btnClickListener);
 		
 		btnDebug_add_mv.setOnClickListener(btnClickListener);
 		btnDebug_make_text_image.setOnClickListener(btnClickListener);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+//		for(int i=0 ; i < array.size() ; i++)	{
+//			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
+//			Log.e("JWJWJW", "btnDebug_add_mv = " + array.get(i));
+//			thumbnailArray.get(i).setImageBitmap(thumbnail);			
+//		}
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)

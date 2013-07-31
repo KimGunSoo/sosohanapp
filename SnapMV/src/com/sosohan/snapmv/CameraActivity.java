@@ -1,13 +1,16 @@
 package com.sosohan.snapmv;
 
 import java.io.IOException;
+import java.util.List;
 
 import android.hardware.Camera;
+import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -19,9 +22,9 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
 
-public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener, OnCheckedChangeListener {
+public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener{
 	String cam_tag = "CameraActivity";
-
+	String OutputPath = "/sdcard/DCIM/";
 	SurfaceView camSurfaceView;
 	Camera camera;
 	MediaRecorder recorder;
@@ -29,7 +32,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	
 	ToggleButton recordToggle;
 	ToggleButton backFrontCamToggle;
-	
+	CamcorderProfile camProfile;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,10 +44,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);//this is a deprecated method, is not required after 3.0 
         		
-		recordToggle = (ToggleButton) findViewById(R.id.record_toggle_btn);
-		backFrontCamToggle = (ToggleButton) findViewById(R.id.back_front_toggle_btn);
-		recordToggle.setOnCheckedChangeListener(this);
-		backFrontCamToggle.setOnCheckedChangeListener(this);
+		camProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_480P);
+		Log.v(cam_tag,"w" + camProfile.videoFrameWidth + "/h"+ camProfile.videoFrameHeight); 
 	}
 	@Override
 	protected void onResume() {
@@ -52,9 +53,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		super.onResume();
 		Log.v(cam_tag, "onResume");		
 		
-	}
-	
-	
+	}	
+	int idx = 1;
 	private void start() {
 		Log.v(cam_tag, "start");		
 		try {
@@ -68,14 +68,15 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 //			recorder.setProfile(camcorderProfile_HQ);
 			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
-			CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_480P);
-			Log.v(cam_tag,"w" + profile.videoFrameWidth + "/h"+ profile.videoFrameHeight); 
-			recorder.setVideoSize(profile.videoFrameWidth,profile.videoFrameHeight);
+			
+			recorder.setVideoSize(camProfile.videoFrameWidth,camProfile.videoFrameHeight);
+			//if g3
+			//recorder.setVideoSize(1280,720);
 			recorder.setVideoFrameRate(30);
 			recorder.setVideoEncodingBitRate(6000000);
 			recorder.setMaxDuration(3000);	
 			recorder.setOnInfoListener(this);
-			recorder.setOutputFile("/sdcard/DCIM/jw.mp4"); 
+			recorder.setOutputFile(OutputPath+idx+".mp4"); 
 			recorder.setPreviewDisplay(holder.getSurface());
 			recorder.prepare();
 			recorder.start();
@@ -93,7 +94,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		recorder.release();
 		finish();
 	}
-	private int getCameraId(int info)
+	private int getCameraInfo(int info)
 	{
 		int result = -1;
 		int cameraCount = 0;
@@ -118,9 +119,14 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.i(cam_tag, "surfaceCreated");
-		camera = Camera.open( getCameraId(Camera.CameraInfo.CAMERA_FACING_FRONT) );	
-	}
-	
+		DisplayMetrics displayMetrics = new DisplayMetrics(); 
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		
+		int height = displayMetrics.heightPixels;
+		holder.setFixedSize((camProfile.videoFrameWidth*displayMetrics.heightPixels)/camProfile.videoFrameHeight, height);
+		//Log.d(cam_tag+"vd", "size="+(camProfile.videoFrameWidth*height)/camProfile.videoFrameHeight+", "+height);
+		camera = Camera.open( getCameraInfo(Camera.CameraInfo.CAMERA_FACING_FRONT) );	
+	}	
 	private boolean previewRunning;
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -130,7 +136,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			camera.stopPreview();
 		}
 		Camera.Parameters p = camera.getParameters();
-//		p.setPreviewSize(width, height);
+		if(p != null)
+		{
+			List<Camera.Size> sizeList = p.getSupportedPreviewSizes();
+			for(Size size : sizeList)
+				Log.d(cam_tag+"prv", "size="+size.width+", "+size.height);
+			sizeList = p.getSupportedVideoSizes();
+			for(Size size : sizeList)
+				Log.d(cam_tag+"vd", "size="+size.width+", "+size.height);
+		}
+		p.setPreviewSize(camProfile.videoFrameWidth, camProfile.videoFrameHeight);
 //		p.setPreviewFormat(PixelFormat.JPEG);
 		camera.setParameters(p);
 
@@ -164,25 +179,15 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		}
 	}
 	
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		// TODO Auto-generated method stub
-//		if (buttonView == recordToggle) {
-//			start();
-//			recordToggle.setClickable(false);
-//		} else if (buttonView == backFrontCamToggle) {
-//			
-//		}		
-	}
 	boolean recording = false;
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
-		Log.i(cam_tag, "onTouchEvent");	
+		// TODO Auto-generated method stub		
 		if (event.getAction() == MotionEvent.ACTION_DOWN && !recording){
 			//camSurfaceView.setClickable(false);
 			recording = true;
-			start();	
+			start();
+			idx++;
 		}				
 		return super.onTouchEvent(event);
 	}
