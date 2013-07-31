@@ -100,7 +100,7 @@ public class MakeMVActivity extends Activity {
 					new Thread(new Runnable(){
 						public void run(){
 							//debugDumpOpen();
-							outputOpen();
+							outputOpen();							
 							for (int i = 0; i < videoPaths.size() ; i ++)
 							{
 								appendMV(videoPaths.get(i));
