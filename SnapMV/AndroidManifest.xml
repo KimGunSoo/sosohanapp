@@ -54,7 +54,8 @@
         </activity>
         <activity
             android:name="com.sosohan.snapmv.CameraActivity"
-            android:label="@string/title_activity_camera" >
+            android:label="@string/title_activity_camera"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
     </application>
 

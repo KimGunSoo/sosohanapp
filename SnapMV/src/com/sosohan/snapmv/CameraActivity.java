@@ -2,66 +2,49 @@ package com.sosohan.snapmv;
 
 import java.io.IOException;
 
-import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnInfoListener;
-import android.os.Build;
 import android.os.Bundle;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ToggleButton;
 
-public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener {
+public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener, OnCheckedChangeListener {
 	String cam_tag = "CameraActivity";
-	private Button btnCamera;
-	private View.OnClickListener btnCameraClickListener;
-	//Camera cam;
+
 	SurfaceView camSurfaceView;
 	Camera camera;
 	MediaRecorder recorder;
 	SurfaceHolder holder;
 	
-	boolean recording;
+	ToggleButton recordToggle;
+	ToggleButton backFrontCamToggle;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera);
-		recording = false;
+
 		
 		camSurfaceView = (SurfaceView) findViewById(R.id.camSurfaceView);
 		holder = camSurfaceView.getHolder();
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);//this is a deprecated method, is not required after 3.0 
         		
-		btnCamera = (Button) findViewById(R.id.camera_test_btn);
-		
-		btnCameraClickListener = new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {	
-				
-				if(!recording){
-					start();
-					recording = true;
-				} 
-//				else {					
-//					btnCamera.setText("stop");
-//					recording = false;
-//					stop();					
-//				}
-				
-			}			
-		};
-		btnCamera.setOnClickListener(btnCameraClickListener);
+		recordToggle = (ToggleButton) findViewById(R.id.record_toggle_btn);
+		backFrontCamToggle = (ToggleButton) findViewById(R.id.back_front_toggle_btn);
+		recordToggle.setOnCheckedChangeListener(this);
+		backFrontCamToggle.setOnCheckedChangeListener(this);
 	}
 	@Override
 	protected void onResume() {
@@ -70,16 +53,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		Log.v(cam_tag, "onResume");		
 		
 	}
-	@Override
-	public void onInfo(MediaRecorder mr, int what, int extra) {
-		// TODO Auto-generated method stub
-		if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
-			Log.v(cam_tag,"Maximum Duration Reached"); 
-			mr.stop();
-			recorder.release();
-		}
-		recording = false;
-	}
+	
+	
 	private void start() {
 		Log.v(cam_tag, "start");		
 		try {
@@ -118,33 +93,39 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		recorder.release();
 		finish();
 	}
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		Log.v(cam_tag, "surfaceCreated");
+	private int getCameraId(int info)
+	{
+		int result = -1;
 		int cameraCount = 0;
 		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
 		cameraCount = Camera.getNumberOfCameras();
 		Log.v(cam_tag, "cameraCount="+cameraCount);
 		for ( int camIdx = 0; camIdx < cameraCount; camIdx++ ) {
 			Camera.getCameraInfo( camIdx, cameraInfo );
-			if ( cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT  ) {
+			if ( cameraInfo.facing == info  ) {
 				try {
 					Log.v(cam_tag, "camIdx="+camIdx);
-					camera = Camera.open( camIdx );
+					//camera = Camera.open( camIdx );
+					result = camIdx;
 					Log.v(cam_tag, "camera="+camera);
 				} catch (RuntimeException e) {
 					Log.e(cam_tag, "Camera failed to open: " + e.getLocalizedMessage());
 				}
 			}
-		}		
+		}	
+		return result;		
+	}
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		Log.i(cam_tag, "surfaceCreated");
+		camera = Camera.open( getCameraId(Camera.CameraInfo.CAMERA_FACING_FRONT) );	
 	}
 	
 	private boolean previewRunning;
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		Log.v(cam_tag, "surfaceChanged");		
+		Log.i(cam_tag, format+"surfaceChanged"+width+"*"+height);		
 		if (previewRunning){
 			camera.stopPreview();
 		}
@@ -166,18 +147,49 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Log.v(cam_tag, "surfaceDestroyed");	
-		// TODO Auto-generated method stub
+		Log.i(cam_tag, "surfaceDestroyed");	
 		camera.stopPreview();
 		previewRunning = false;
 		camera.release();
 	}
 	
 	@Override
+	public void onInfo(MediaRecorder mr, int what, int extra) {
+		if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+			Log.v(cam_tag,"Maximum Duration Reached"); 
+			mr.stop();
+			recorder.release();
+			recording = false;
+			//camSurfaceView.setClickable(true);
+		}
+	}
+	
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		// TODO Auto-generated method stub
+//		if (buttonView == recordToggle) {
+//			start();
+//			recordToggle.setClickable(false);
+//		} else if (buttonView == backFrontCamToggle) {
+//			
+//		}		
+	}
+	boolean recording = false;
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		// TODO Auto-generated method stub
+		Log.i(cam_tag, "onTouchEvent");	
+		if (event.getAction() == MotionEvent.ACTION_DOWN && !recording){
+			//camSurfaceView.setClickable(false);
+			recording = true;
+			start();	
+		}				
+		return super.onTouchEvent(event);
+	}
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.camera, menu);
 		return true;
 	}
-	
 }
