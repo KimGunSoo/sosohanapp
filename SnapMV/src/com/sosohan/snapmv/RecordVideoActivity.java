@@ -156,11 +156,24 @@ public class RecordVideoActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		for(int i=0 ; i < array.size() ; i++)	{
-//			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
-//			Log.e("JWJWJW", "btnDebug_add_mv = " + array.get(i));
-//			thumbnailArray.get(i).setImageBitmap(thumbnail);			
-//		}
+		int cnt = 8;
+		File [] filelist = new File[cnt];
+		String path = "/sdcard/DCIM/";
+		Log.e("JWJWJW", "onResume"); 
+		array.clear();
+		
+		for(int i=0; i < cnt; i++){
+			filelist[i] = new File(path+i+".mp4");
+			Log.e("JWJWJW", path+i+".mp4");
+			if(filelist[i].exists())
+				array.add(path+i+".mp4");
+		}
+		
+		for(int i=0 ; i < array.size() ; i++)	{
+			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
+			Log.e("JWJWJW", "btnDebug_add_mv = " + array.get(i));
+			thumbnailArray.get(i).setImageBitmap(thumbnail);			
+		}
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)

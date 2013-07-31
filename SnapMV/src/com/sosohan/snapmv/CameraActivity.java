@@ -187,7 +187,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			//camSurfaceView.setClickable(false);
 			recording = true;
 			start();
-			idx++;
+			if(idx == 8)
+				idx = 1;
+			else
+				idx++;
 		}				
 		return super.onTouchEvent(event);
 	}
