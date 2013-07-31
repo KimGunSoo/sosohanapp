@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +35,8 @@ public class SelectBgmActivity extends Activity {
 
 	private static ArrayList<String> bgmList = new ArrayList<String>();
 	private static String bgmPath = null;
+	private static Context mContext = null;
+	private static Semaphore loadCompleted = new Semaphore(1);
 
 	private ListView bgmListView;
 	private ArrayAdapter<String> adapter;
@@ -63,7 +67,15 @@ public class SelectBgmActivity extends Activity {
 			}
 		};
 		btnMakeMVActivity.setOnClickListener(btnBgmClickListener);
+
+		
+		try {
+			loadCompleted.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		initListView();
+		loadCompleted.release();
 		audioPlayer = new MediaPlayer();
 	}
 
@@ -76,42 +88,62 @@ public class SelectBgmActivity extends Activity {
 		
 		bgmListView.setOnItemClickListener(clickListener);
 	}
+	
+	private static Thread loadingTh = null;
 
-	public static void bgmFileLoading(Context ctx) {
-		String[] itemList = null;
-		InputStream in = null;
-		OutputStream out = null;
-		AssetManager am = ctx.getAssets();
+	public static void bgmLoadingThStart(Context ctx) {
+		mContext = ctx;
+		if(loadingTh == null) {
+			loadingTh = new Thread(){
+				public void run(){
+					if(DEBUG) Log.d(BGM_TAG,"loadingTh start");
 
-		bgmPath = ctx.getFilesDir().getPath().toString();
-
-		try {
-			itemList = am.list("bgm");
-
-			for(int i=0; i<itemList.length; i++) {
-				if(DEBUG) Log.d(BGM_TAG,"item  = " + itemList[i] + ", bgmPath="+bgmPath );
-
-				File f = new File(bgmPath +"/"+ itemList[i]);
-
-				if(f.createNewFile()) {
-					out = new FileOutputStream(bgmPath +"/"+ itemList[i]);
-					in = am.open("bgm/"+itemList[i]);
-
-					copyFile(in, out);
+					try {
+						loadCompleted.acquire();
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
 					
-					in.close();
-					in = null;
-					out.flush();
-					out.close();
-					out = null;
-				}
+					String[] itemList = null;
+					InputStream in = null;
+					OutputStream out = null;
+					AssetManager am = mContext.getAssets();
 
-				bgmList.add(itemList[i]);
-			}
-			
-		} catch (IOException e) {
-			Log.d(BGM_TAG,"fileLoading() fail");
-			e.printStackTrace();
+					bgmPath = mContext.getFilesDir().getPath().toString();
+
+					try {
+						itemList = am.list("bgm");
+
+						for(int i=0; i<itemList.length; i++) {
+							if(DEBUG) Log.d(BGM_TAG,"item  = " + itemList[i] + ", bgmPath="+bgmPath );
+
+							File f = new File(bgmPath +"/"+ itemList[i]);
+
+							if(f.createNewFile()) {
+								out = new FileOutputStream(bgmPath +"/"+ itemList[i]);
+								in = am.open("bgm/"+itemList[i]);
+
+								copyFile(in, out);
+								
+								in.close();
+								in = null;
+								out.flush();
+								out.close();
+								out = null;
+							}
+
+							bgmList.add(itemList[i]);
+						}
+					
+					} catch (IOException e) {
+						Log.d(BGM_TAG,"fileLoading() fail");
+						e.printStackTrace();
+					} finally {
+						loadCompleted.release();
+					}
+				}
+			};
+			loadingTh.start();
 		}
 	}
 
