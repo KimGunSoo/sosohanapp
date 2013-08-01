@@ -26,7 +26,7 @@
             android:src="@android:drawable/ic_menu_help" />
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/logo_btn"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:src="@android:drawable/ic_menu_help" />

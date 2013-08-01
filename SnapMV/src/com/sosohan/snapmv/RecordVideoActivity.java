@@ -1,7 +1,9 @@
 package com.sosohan.snapmv;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -60,7 +62,7 @@ public class RecordVideoActivity extends Activity {
 		
 		//thumbnailArray = (ImageView) findViewById(R.id.imageView1);
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
-		thumbnailArray.add((ImageView) findViewById(R.id.imageView1));
+		thumbnailArray.add((ImageView) findViewById(R.id.logo_btn));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView2));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView3));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView4));
@@ -116,7 +118,7 @@ public class RecordVideoActivity extends Activity {
 				}
 				else if (v == btnDebug_make_text_image)
 				{
-					String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+					String path = "/sdcard";//Environment.getExternalStorageDirectory().getAbsolutePath();
 					Log.e("hjhjhj", "path : " + path);
 					Bitmap  b = Bitmap.createBitmap(640, 480, Bitmap.Config.RGB_565);
 					View view = (View)findViewById(R.id.imageView0);
@@ -140,6 +142,28 @@ public class RecordVideoActivity extends Activity {
 						}
 					} catch ( Exception e ) {
 						Log.e("testSaveView", "Exception: " + e.toString() ); 
+					}
+
+
+
+					Process chperm;
+					try {
+						
+						chperm=Runtime.getRuntime().exec("ffmpeg -f image2 -i " + path + "/notes/"+"test"+".png"+" /sdcard/DCIM/7.mp4\n");
+//						DataOutputStream os = 
+//								new DataOutputStream(chperm.getOutputStream());
+//						Log.e("testSaveView", "ffmpeg -f image2 -i "+path + "/notes/"+"test"+".png"+" /sdcard/DCIM/7.mp4\n"); 
+//						os.writeBytes("ffmpeg -f image2 -i " + path + "/notes/"+"test"+".png"+" /sdcard/DCIM/7.mp4\n");
+//						os.flush();
+
+						chperm.waitFor();
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				} 
 			}

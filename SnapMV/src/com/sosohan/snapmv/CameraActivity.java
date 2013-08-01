@@ -10,6 +10,7 @@ import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -20,12 +21,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.ToggleButton;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener{
 	String cam_tag = "CameraActivity";
 	String OutputPath = "/sdcard/DCIM/";
 	SurfaceView camSurfaceView;
+	ImageView logoBtn;
 	Camera camera;
 	MediaRecorder recorder;
 	SurfaceHolder holder;
@@ -37,9 +40,24 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera);
-
-		
+		logoBtn = (ImageView)  findViewById(R.id.logo_btn);
 		camSurfaceView = (SurfaceView) findViewById(R.id.camSurfaceView);
+		
+		logoBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				recording = true;
+				start();
+				//camSurfaceView.setClickable(false);
+				logoBtn.setImageResource(R.drawable.ic_snap_cam_rec);
+				if(idx >= 8)
+					idx = 1;
+				else
+					idx++;
+			}
+		});
+		
 		holder = camSurfaceView.getHolder();
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);//this is a deprecated method, is not required after 3.0 
@@ -172,28 +190,31 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	public void onInfo(MediaRecorder mr, int what, int extra) {
 		if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
 			Log.v(cam_tag,"Maximum Duration Reached"); 
-			mr.stop();
+			mr.stop();			
 			recorder.release();
 			recording = false;
 			//camSurfaceView.setClickable(true);
+			logoBtn.setImageResource(R.drawable.ic_snap_cam);
 		}
 	}
 	
 	boolean recording = false;
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub		
-		if (event.getAction() == MotionEvent.ACTION_DOWN && !recording){
-			//camSurfaceView.setClickable(false);
-			recording = true;
-			start();
-			if(idx == 8)
-				idx = 1;
-			else
-				idx++;
-		}				
-		return super.onTouchEvent(event);
-	}
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event) {
+//		// TODO Auto-generated method stub		
+//		if (event.getAction() == MotionEvent.ACTION_DOWN && !recording){
+//			
+//			recording = true;
+//			start();
+//			//camSurfaceView.setClickable(false);
+//			logoBtn.setImageResource(R.drawable.ic_snap_cam_rec);
+//			if(idx >= 8)
+//				idx = 1;
+//			else
+//				idx++;
+//		}				
+//		return super.onTouchEvent(event);
+//	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
