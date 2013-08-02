@@ -10,20 +10,17 @@ import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MotionEvent;
-import android.view.Surface;
+
+import android.view.OrientationEventListener;
+
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+
 import android.widget.ImageView;
 import android.widget.ToggleButton;
 
@@ -40,6 +37,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	ToggleButton recordToggle;
 	ToggleButton backFrontCamToggle;
 	CamcorderProfile camProfile;
+	OrientationEventListener oel;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,14 +48,17 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		
 		logoBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				recording = true;
-				start();
-				logoBtn.setImageResource(R.drawable.ic_snap_cam_rec);
-				if(idx >= 8)
-					idx = 1;
-				else
-					idx++;
+			public void onClick(View v) {	
+				oel.disable();
+				if(!recording){	
+					start();
+					recording = true;
+					setLogoImage(rotation);							
+					if(idx >= 8)
+						idx = 1;
+					else
+						idx++;
+				}								
 			}
 		});
 		
@@ -68,14 +69,56 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		camProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_480P);
 		//if s3
 		//camProfile.videoFrameWidth = 720;
+		oel = new OrientationEventListener(this) {
+			@Override
+			public void onOrientationChanged(int orientation) {				
+				if ((orientation <= 45 && orientation >= 0) || (orientation <= 359 && orientation >= 311)) {
+					Log.i("Test", "Portrait");					
+					rotation = 270;
+				} else if (orientation <= 310 && orientation >= 225) {					
+					Log.i("Test", "Landscape");
+					rotation = 0;
+				}
+				if(!recording)
+					setLogoImage(rotation);
+			}
+		};
+		oel.enable();
 		Log.v(cam_tag,"w" + camProfile.videoFrameWidth + "/h"+ camProfile.videoFrameHeight); 
+	}
+	
+	int rotation = 0;
+	private void setLogoImage(int rot)
+	{
+		if(!recording)
+		{
+			if(rot ==0)
+			{
+				logoBtn.setImageResource(R.drawable.ic_snap_cam);
+			}
+			else if(rot == 270)
+			{
+				logoBtn.setImageResource(R.drawable.ic_snap_cam_po);
+			}
+		}
+		else //if(recording)
+		{
+			if(rot ==0)
+			{
+				logoBtn.setImageResource(R.drawable.ic_snap_cam_rec);
+			}
+			else if(rot == 270)
+			{
+				logoBtn.setImageResource(R.drawable.ic_snap_cam_rec_po);
+			}
+		}
 	}
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		Log.v(cam_tag, "onResume");		
-		
+		Log.v(cam_tag, "onResume");	
+		setLogoImage(rotation);		
 	}	
 	int idx = 1;
 	private void start() {
@@ -194,22 +237,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		else{					
 			holder.setFixedSize((camProfile.videoFrameWidth*DisplayHeight)/camProfile.videoFrameHeight, DisplayHeight);
 		}
-//		int rotation = getWindowManager().getDefaultDisplay()
-//                .getRotation();
-//		 switch (rotation) {
-//         case Surface.ROTATION_0:
-//        	 Log.e("JWJWJW", "rot 0");
-//             camera.setDisplayOrientation(90);
-//             break;
-//         case Surface.ROTATION_90:
-//        	 Log.e("JWJWJW", "rot 90");
-//        	 camera.setDisplayOrientation(0);
-//             break;
-//         case Surface.ROTATION_180:
-//        	 Log.e("JWJWJW", "rot 180");
-//        	 camera.setDisplayOrientation(180);
-//             break;         
-//         }
 	}
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -226,7 +253,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			mr.stop();			
 			recorder.release();
 			recording = false;
-			logoBtn.setImageResource(R.drawable.ic_snap_cam);
+			setLogoImage(rotation);		
 		}
 	}	
 	boolean recording = false;
@@ -251,17 +278,5 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.camera, menu);
 		return true;
-	}
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			resizeCamSurfaceView();	
-			camera.setDisplayOrientation(0);
-		}else if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-			resizeCamSurfaceView();	
-			camera.setDisplayOrientation(90);
-		}
-		
-		super.onConfigurationChanged(newConfig);		
-	}
+	}	
 }

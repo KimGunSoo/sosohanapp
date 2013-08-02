@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 	<uses-feature android:name="android.hardware.camera" />
+	<uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_snap"
@@ -54,7 +55,8 @@
         </activity>
         <activity
             android:name="com.sosohan.snapmv.CameraActivity"
-            android:label="@string/title_activity_camera"         
+            android:label="@string/title_activity_camera" 
+            android:screenOrientation="landscape"        
             android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
