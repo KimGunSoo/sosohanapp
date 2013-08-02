@@ -15,12 +15,12 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
+	private static final boolean PREF_TEST = false;
 
 	private Button btnRecordVideoActivity;
 	private Button btnSettingActivity;
 	private View.OnClickListener btnClickListener;
 	private Context mContext = null;
-	private MediaDataPreference mMediaPref = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,31 +43,41 @@ public class MainActivity extends Activity {
 							SettingsActivity.class);
 					startActivity(intent);
 				}
-				
 			}
 		};
 
 		btnRecordVideoActivity.setOnClickListener(btnClickListener);
 		btnSettingActivity.setOnClickListener(btnClickListener);
 
-    // BGM loading
-		if (mContext == null)
-			mContext = getApplicationContext();
-		SelectBgmActivity.bgmLoadingThStart(mContext);
-
 		// For preference test.
+		if(PREF_TEST) test_preference();
+	}
+
+	private void test_preference() {
 		String facebook_id;
-		mMediaPref = MediaDataPreference.getInstance(mContext);
-		facebook_id = mMediaPref.getFaceBookId();
+		MediaDataPreference mediaPref = null;
+
+		mediaPref = MediaDataPreference.getInstance(mContext);
+		facebook_id = mediaPref.getFaceBookId();
 		if(facebook_id == null) {
-			mMediaPref.setFaceBookId("wish4679");
+			mediaPref.setFaceBookId("sosohanmv");
 			Log.d(TAG,"facebook id is not set");
 		} else {
 			Log.d(TAG,"facebook id is " + facebook_id);
 		}
 	}
-	
-    @Override
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// BGM loading
+		if (mContext == null)
+			mContext = getApplicationContext();
+		SelectBgmActivity.bgmLoadingThStart(mContext);
+	}
+
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);

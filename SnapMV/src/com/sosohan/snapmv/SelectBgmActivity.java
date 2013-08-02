@@ -13,7 +13,6 @@ import java.util.concurrent.Semaphore;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,8 +34,8 @@ public class SelectBgmActivity extends Activity {
 
 	private static ArrayList<String> bgmList = new ArrayList<String>();
 	private static String bgmPath = null;
-	private static Context mContext = null;
 	private static Semaphore loadCompleted = new Semaphore(1);
+	private static Thread loadingTh = null;
 
 	private ListView bgmListView;
 	private ArrayAdapter<String> adapter;
@@ -45,7 +44,7 @@ public class SelectBgmActivity extends Activity {
 	private String selectedBGMPath = null;
 	private Button btnMakeMVActivity;
 	private View.OnClickListener btnBgmClickListener;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,7 +67,13 @@ public class SelectBgmActivity extends Activity {
 		};
 		btnMakeMVActivity.setOnClickListener(btnBgmClickListener);
 
-		
+		audioPlayer = new MediaPlayer();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
 		try {
 			loadCompleted.acquire();
 		} catch (InterruptedException e) {
@@ -76,10 +81,13 @@ public class SelectBgmActivity extends Activity {
 		}
 		initListView();
 		loadCompleted.release();
-		audioPlayer = new MediaPlayer();
 	}
 
 	private void initListView() {
+		if(loadingTh == null) {
+			SelectBgmActivity.bgmLoadingThStart(getApplicationContext());
+		}
+
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bgmList);
 
 		bgmListView = (ListView)findViewById(R.id.bgmList);
@@ -88,11 +96,8 @@ public class SelectBgmActivity extends Activity {
 		
 		bgmListView.setOnItemClickListener(clickListener);
 	}
-	
-	private static Thread loadingTh = null;
 
-	public static void bgmLoadingThStart(Context ctx) {
-		mContext = ctx;
+	public static void bgmLoadingThStart(final Context ctx) {
 		if(loadingTh == null) {
 			loadingTh = new Thread(){
 				public void run(){
@@ -103,13 +108,13 @@ public class SelectBgmActivity extends Activity {
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
-					
+
 					String[] itemList = null;
 					InputStream in = null;
 					OutputStream out = null;
-					AssetManager am = mContext.getAssets();
+					AssetManager am = ctx.getAssets();
 
-					bgmPath = mContext.getFilesDir().getPath().toString();
+					bgmPath = ctx.getFilesDir().getPath().toString();
 
 					try {
 						itemList = am.list("bgm");
