@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="13"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -54,8 +54,8 @@
         </activity>
         <activity
             android:name="com.sosohan.snapmv.CameraActivity"
-            android:label="@string/title_activity_camera"
-            android:screenOrientation="landscape"
+            android:label="@string/title_activity_camera"         
+            android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
     </application>
