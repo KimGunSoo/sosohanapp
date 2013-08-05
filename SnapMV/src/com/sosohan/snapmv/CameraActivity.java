@@ -9,7 +9,6 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Bundle;
-import android.os.Environment;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.util.DisplayMetrics;
@@ -28,7 +27,7 @@ import android.widget.ToggleButton;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener{
 	String cam_tag = "CameraActivity";
-	String OutputPath = getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath().toString();
+	String promisedPath = "/sdcard/DCIM/";
 	SurfaceView camSurfaceView;
 	ImageView logoBtn;
 	Camera camera;
@@ -39,14 +38,19 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	ToggleButton backFrontCamToggle;
 	CamcorderProfile camProfile;
 	OrientationEventListener oel;
+	
+	MediaDataPreference mediaPref = null;
 	int idx = 0;
 	int rotation = 0;
+	boolean recording = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera);
 		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		mediaPref = MediaDataPreference.getInstance(getApplicationContext());
+		
 		logoBtn = (ImageView)  findViewById(R.id.logo_btn);
 		camSurfaceView = (SurfaceView) findViewById(R.id.camSurfaceView);
 		
@@ -57,11 +61,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 				if(!recording){	
 					start();
 					recording = true;
-					setLogoImage(rotation);							
-					if(idx > 8)
-						finish();
-					else
-						idx++;
+					setLogoImage(rotation);	
+					Log.i(cam_tag, "setOnClickListener idx"+idx);	
+					idx++;
 				}								
 			}
 		});
@@ -121,48 +123,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		// TODO Auto-generated method stub
 		super.onResume();
 		Log.v(cam_tag, "onResume");	
-		setLogoImage(rotation);		
+		setLogoImage(rotation);
+		
+		idx = mediaPref.getCurrentIdx();
 	}	
 	
-	private void start() {
-		Log.v(cam_tag, "start");		
-		try {
-			recorder = new MediaRecorder();
-			camera.unlock();
-			recorder.setCamera(camera);
-			recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-			//recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-			
-//			CamcorderProfile camcorderProfile_HQ = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-//			recorder.setProfile(camcorderProfile_HQ);
-			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
-			
-			recorder.setVideoSize(camProfile.videoFrameWidth,camProfile.videoFrameHeight);
-			//if g3
-			//recorder.setVideoSize(1280,720);
-			recorder.setVideoFrameRate(30);
-			recorder.setVideoEncodingBitRate(6000000);
-			recorder.setMaxDuration(3000);	
-			recorder.setOnInfoListener(this);
-			recorder.setOutputFile(OutputPath+idx+".mp4"); 
-			recorder.setPreviewDisplay(holder.getSurface());
-			recorder.prepare();
-			recorder.start();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	private void stop() {
-		Log.v(cam_tag, "stop");		
-		recorder.stop();
-		recorder.release();
-		finish();
-	}
 	private int getCameraInfo(int info)
 	{
 		int result = -1;
@@ -256,10 +221,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			mr.stop();			
 			recorder.release();
 			recording = false;
-			setLogoImage(rotation);		
+			setLogoImage(rotation);
+			Log.i(cam_tag, "onInfo idx"+idx);	
+			if(idx >= 8) {
+				finish();
+			} else {
+				mediaPref.setCurrentIdx(idx);
+			}			
 		}
 	}	
-	boolean recording = false;
+	
 //	@Override
 //	public boolean onTouchEvent(MotionEvent event) {
 //		// TODO Auto-generated method stub		
@@ -281,5 +252,44 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.camera, menu);
 		return true;
-	}	
+	}
+	private void start() {
+		Log.v(cam_tag, "start");		
+		try {
+			recorder = new MediaRecorder();
+			camera.unlock();
+			recorder.setCamera(camera);
+			recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+			//recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+			
+//			CamcorderProfile camcorderProfile_HQ = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+//			recorder.setProfile(camcorderProfile_HQ);
+			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+			
+			recorder.setVideoSize(camProfile.videoFrameWidth,camProfile.videoFrameHeight);
+			//if g3
+			//recorder.setVideoSize(1280,720);
+			recorder.setVideoFrameRate(30);
+			recorder.setVideoEncodingBitRate(6000000);
+			recorder.setMaxDuration(3000);	
+			recorder.setOnInfoListener(this);
+			recorder.setOutputFile(promisedPath+idx+".mp4"); 
+			recorder.setPreviewDisplay(holder.getSurface());
+			recorder.prepare();
+			recorder.start();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private void stop() {
+		Log.v(cam_tag, "stop");		
+		recorder.stop();
+		recorder.release();
+		finish();
+	}
 }

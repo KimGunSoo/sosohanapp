@@ -13,6 +13,7 @@ public class MediaDataPreference {
 	private static Context mContext = null;
 
 	private static final String PREF_KEY_FACEBOOK_ID = "facebook_id";
+	private static final String PREF_KEY_CURRENT_MV_IDX = "current_index";
 	private static final String PREF_FAIL_STRING = "sosohanfailsosohan";
 
 	private MediaDataPreference() {
@@ -50,5 +51,26 @@ public class MediaDataPreference {
 		}
 
 		return id;
+	}
+	public void setCurrentIdx(int idx) {
+		SharedPreferences.Editor ed = mPref.edit();
+		
+		ed.putInt(PREF_KEY_CURRENT_MV_IDX, idx);
+		boolean ret = ed.commit();
+		if(!ret)
+		{
+			Log.e(TAG, "getCurrentIdx() fail : PREF_KEY_CURRENT_MV_IDX commit, need retry?");
+		}
+	}
+	
+	public int getCurrentIdx() {
+		int idx = 0;
+		
+		idx = mPref.getInt(PREF_KEY_CURRENT_MV_IDX, -1);
+		if( idx == -1) {
+			Log.d(TAG, "getCurrentIdx() fail : PREF_KEY_CURRENT_MV_IDX preference value not exist");
+			idx = 0;
+		}
+		return idx;
 	}
 }

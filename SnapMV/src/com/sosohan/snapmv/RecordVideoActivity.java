@@ -45,12 +45,14 @@ public class RecordVideoActivity extends Activity {
 	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();	
 	private ImageButton btnDebug_add_mv;
 	private Button btnDebug_make_text_image;
-	
+	MediaDataPreference mediaPref = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_record_video);       
+		
+		mediaPref = MediaDataPreference.getInstance(getApplicationContext());
 		
 		btnCamera = (Button) findViewById(R.id.camera_A_btn);
 		btnPreview = (Button) findViewById(R.id.preview_A_btn);
@@ -78,7 +80,8 @@ public class RecordVideoActivity extends Activity {
 						thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
 					}
 					view.setColorFilter(0xaa111111, Mode.SRC_OVER);
-					Log.e("JWJWJW", "onTouch index = "+thumbnailArray.indexOf(view));
+					Log.d("JWJWJW", "onTouch index = "+thumbnailArray.indexOf(view));
+					mediaPref.setCurrentIdx(thumbnailArray.indexOf(view));
 				}					
 				return true;
 			}			
@@ -188,22 +191,25 @@ public class RecordVideoActivity extends Activity {
 		super.onResume();
 		int cnt = 8;
 		File [] filelist = new File[cnt];
-		String path = "/sdcard/DCIM/";
+		String promisedPath = "/sdcard/DCIM/";
 		Log.e("JWJWJW", "onResume"); 
 		array.clear();
 		
 		for(int i=0; i < cnt; i++){
-			filelist[i] = new File(path+i+".mp4");
-			Log.e("JWJWJW", path+i+".mp4");
+			filelist[i] = new File(promisedPath+i+".mp4");
+			Log.e("JWJWJW", promisedPath+i+".mp4");
 			if(filelist[i].exists())
-				array.add(path+i+".mp4");
+				array.add(promisedPath+i+".mp4");
 		}
 		
 		for(int i=0 ; i < array.size() ; i++)	{
 			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
 			Log.e("JWJWJW", "btnDebug_add_mv = " + array.get(i));
-			thumbnailArray.get(i).setImageBitmap(thumbnail);			
-		}
+			thumbnailArray.get(i).setImageBitmap(thumbnail);
+			thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
+		}		
+		int idx = mediaPref.getCurrentIdx();
+		thumbnailArray.get(idx).setColorFilter(0xaa111111, Mode.SRC_OVER);
 	}
 	
 	@Override

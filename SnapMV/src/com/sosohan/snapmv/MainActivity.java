@@ -16,7 +16,7 @@ import android.widget.Button;
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	private static final boolean PREF_TEST = false;
-
+	private static final boolean PREF_TEST2 = false;
 	private Button btnRecordVideoActivity;
 	private Button btnSettingActivity;
 	private View.OnClickListener btnClickListener;
@@ -51,6 +51,7 @@ public class MainActivity extends Activity {
 
 		// For preference test.
 		if(PREF_TEST) test_preference();
+		
 	}
 
 	private void test_preference() {
@@ -67,6 +68,13 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	private void test_preference2() {
+		MediaDataPreference mediaPref = null;
+
+		mediaPref = MediaDataPreference.getInstance(mContext);
+		mediaPref.setCurrentIdx(0);
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -75,6 +83,7 @@ public class MainActivity extends Activity {
 		if (mContext == null)
 			mContext = getApplicationContext();
 		SelectBgmActivity.bgmLoadingThStart(mContext);
+		if(PREF_TEST2) test_preference2();
 	}
 
 	@Override
