@@ -54,8 +54,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 					start();
 					recording = true;
 					setLogoImage(rotation);							
-					if(idx >= 8)
-						idx = 1;
+					if(idx > 8)
+						idx = 0;
 					else
 						idx++;
 				}								
@@ -120,7 +120,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		Log.v(cam_tag, "onResume");	
 		setLogoImage(rotation);		
 	}	
-	int idx = 1;
+	int idx = 0;
 	private void start() {
 		Log.v(cam_tag, "start");		
 		try {
