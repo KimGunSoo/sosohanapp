@@ -1,6 +1,6 @@
 package com.sosohan.snapmv;
 
-import java.io.DataOutputStream;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,19 +10,19 @@ import java.util.ArrayList;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Thumbnails;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -40,10 +40,9 @@ public class RecordVideoActivity extends Activity {
 	private Button btnPreview;
 	private Button btnDone;	
 	private View.OnClickListener btnClickListener;
+	private View.OnTouchListener btnTouchListener;
 	
-	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();
-	private int videoIndex = 0;
-	
+	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();	
 	private ImageButton btnDebug_add_mv;
 	private Button btnDebug_make_text_image;
 	
@@ -60,9 +59,8 @@ public class RecordVideoActivity extends Activity {
 		btnDebug_add_mv = (ImageButton) findViewById(R.id.imageButton1);
 		btnDebug_make_text_image = (Button) findViewById(R.id.tmp_debug_btn);
 		
-		//thumbnailArray = (ImageView) findViewById(R.id.imageView1);
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
-		thumbnailArray.add((ImageView) findViewById(R.id.logo_btn));
+		thumbnailArray.add((ImageView) findViewById(R.id.imageView1));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView2));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView3));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView4));
@@ -70,7 +68,25 @@ public class RecordVideoActivity extends Activity {
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView6));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView7));
 		
-		//final String path = getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath().toString();
+		btnTouchListener = new View.OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				ImageView view = (ImageView) v;
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					for(int i=0 ; i < thumbnailArray.size() ; i++)	{					
+						thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
+					}
+					view.setColorFilter(0xaa111111, Mode.SRC_OVER);
+					Log.e("JWJWJW", "onTouch index = "+thumbnailArray.indexOf(view));
+				}					
+				return true;
+			}			
+		};
+		
+		for(int i=0 ; i < thumbnailArray.size() ; i++)	{					
+			thumbnailArray.get(i).setOnTouchListener(btnTouchListener);
+		}
 		
 		btnClickListener = new View.OnClickListener() {
 			
@@ -92,18 +108,8 @@ public class RecordVideoActivity extends Activity {
 					startActivity(intent);					
 				}else if (v == btnDebug_add_mv )
 				{
-					//array.add("/sdcard/DCIM/sosohan0.mp4");
-					//array.add("/sdcard/DCIM/sosohan1.mp4");	
-//					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00011.mp4");	
-//					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00010.mp4");	
-//					array.add("/storage/sdcard0/DCIM/100LGDSC/CAM00009.mp4");
-//					array.add("/sdcard/DCIM/Camera/20130717_120750.3gp");
-//					array.add("/sdcard/DCIM/Camera/20130718_173307.3gp");
-//					array.add("/sdcard/DCIM/Camera/20130717_120236.3gp");
 					array.add("/sdcard/DCIM/Camera/VID_20130719_170343.3gp");
 					array.add("/sdcard/DCIM/Camera/VID_20130719_180532.3gp");
-//					array.add("/sdcard/DCIM/Camera/VID_20130719_180544.3gp");
-//					array.add("/sdcard/DCIM/Camera/VID_20130717_165542.3gp");
 										
 					for(int i=0 ; i < array.size() ; i++)	{
 						Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
@@ -199,27 +205,6 @@ public class RecordVideoActivity extends Activity {
 			thumbnailArray.get(i).setImageBitmap(thumbnail);			
 		}
 	}
-
-	public void onActivityResult(int requestCode, int resultCode, Intent intent)
-	{
-	    super.onActivityResult(requestCode, resultCode, intent);
-	    if (resultCode == RESULT_OK)
-	    {
-	        if (requestCode == REC_MOV)
-	        {  
-	        	Uri uri = intent.getData();
-	        	String path = getPath(uri);
-	        	//Log.e("JWJWJW", "add = " + videoFilename + ",index = "+videoIndex );
-	        	Log.e("JWJWJW", "add = " + uri.getPath() + "::" + path + ",index = "+videoIndex );
-	        	//array.add(videoFilename);
-	        	array.add(path);
-	        	//Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoFilename, Thumbnails.MICRO_KIND);
-	        	Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(path, Thumbnails.MICRO_KIND);
-	            thumbnailArray.get(videoIndex).setImageBitmap(thumbnail);
-	            videoIndex++;
-	        }
-	    }	   
-	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -227,33 +212,4 @@ public class RecordVideoActivity extends Activity {
 		getMenuInflater().inflate(R.menu.video_capture, menu);
 		return true;
 	}
-	
-	private String getPath(Uri uri)
-	{
-		String[] projection = { MediaStore.Images.Media.DATA };
-		Cursor cursor = managedQuery(uri, projection, null, null, null);
-		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-		cursor.moveToFirst();
-		return cursor.getString(column_index);
-	}
-
-	private String getName(Uri uri)
-	{
-		String[] projection = { MediaStore.Images.ImageColumns.DISPLAY_NAME };
-		Cursor cursor = managedQuery(uri, projection, null, null, null);
-		int column_index = cursor
-				.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DISPLAY_NAME);
-		cursor.moveToFirst();
-		return cursor.getString(column_index);
-	}
-
-	private String getUriId(Uri uri)
-	{
-		String[] projection = { MediaStore.Images.ImageColumns._ID };
-		Cursor cursor = managedQuery(uri, projection, null, null, null);
-		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID);
-		cursor.moveToFirst();
-		return cursor.getString(column_index);
-	}
-
 }

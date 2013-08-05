@@ -9,6 +9,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.util.DisplayMetrics;
@@ -27,7 +28,7 @@ import android.widget.ToggleButton;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener{
 	String cam_tag = "CameraActivity";
-	String OutputPath = "/sdcard/DCIM/";
+	String OutputPath = getExternalFilesDir(Environment.DIRECTORY_MOVIES).getPath().toString();
 	SurfaceView camSurfaceView;
 	ImageView logoBtn;
 	Camera camera;
@@ -38,6 +39,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	ToggleButton backFrontCamToggle;
 	CamcorderProfile camProfile;
 	OrientationEventListener oel;
+	int idx = 0;
+	int rotation = 0;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,7 +59,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 					recording = true;
 					setLogoImage(rotation);							
 					if(idx > 8)
-						idx = 0;
+						finish();
 					else
 						idx++;
 				}								
@@ -86,8 +90,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		oel.enable();
 		Log.v(cam_tag,"w" + camProfile.videoFrameWidth + "/h"+ camProfile.videoFrameHeight); 
 	}
-	
-	int rotation = 0;
+		
 	private void setLogoImage(int rot)
 	{
 		if(!recording)
@@ -120,7 +123,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		Log.v(cam_tag, "onResume");	
 		setLogoImage(rotation);		
 	}	
-	int idx = 0;
+	
 	private void start() {
 		Log.v(cam_tag, "start");		
 		try {
