@@ -30,7 +30,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	String promisedPath = "/sdcard/DCIM/";
 	SurfaceView camSurfaceView;
 	ImageView logoBtn;
+	ImageView changeCamBtn;
 	Camera camera;
+	int frontCam;
+	int backCam;
+	int useCam;
 	MediaRecorder recorder;
 	SurfaceHolder holder;
 	
@@ -50,10 +54,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		setContentView(R.layout.activity_camera);
 		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		mediaPref = MediaDataPreference.getInstance(getApplicationContext());
-		
-		logoBtn = (ImageView)  findViewById(R.id.logo_btn);
+				
 		camSurfaceView = (SurfaceView) findViewById(R.id.camSurfaceView);
 		
+		frontCam = getCameraInfo(Camera.CameraInfo.CAMERA_FACING_FRONT);
+		backCam = getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK);
+		
+		if(backCam != -1)
+			useCam = backCam;
+		
+		logoBtn = (ImageView)  findViewById(R.id.logo_btn);
 		logoBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {	
@@ -65,6 +75,25 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 					Log.i(cam_tag, "setOnClickListener idx"+idx);	
 					idx++;
 				}								
+			}
+		});
+		changeCamBtn = (ImageView)  findViewById(R.id.change_cam);
+		changeCamBtn.setOnClickListener(new View.OnClickListener() {
+			
+			@Override			
+			public void onClick(View v) {
+				stopCamera();
+				if(useCam == frontCam)
+				{
+					useCam = backCam;
+					
+				}
+				else //if (useCam == backCam)
+				{
+					useCam = frontCam;				
+				}
+				Log.i(cam_tag, "setOnClickListener useCam"+useCam);	
+				startCamera(useCam);
 			}
 		});
 		
@@ -151,31 +180,23 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		return result;		
 	}
 	
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		Log.i(cam_tag, "surfaceCreated");
-		resizeCamSurfaceView();
-		camera = Camera.open( getCameraInfo(Camera.CameraInfo.CAMERA_FACING_FRONT) );	
-	}	
 	private boolean previewRunning;
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int pixelFormat, int width,
-			int height) {
-		Log.i(cam_tag, "::surfaceChanged::"+width+"*"+height);	
-				
+	private void startCamera(int cameraIdx)
+	{
+		camera = Camera.open( cameraIdx );
+		
 		if (previewRunning) {
 			camera.stopPreview();
 		}
 		Camera.Parameters p = camera.getParameters();
-		if(p != null) {
-			List<Camera.Size> sizeList = p.getSupportedPreviewSizes();
-			for(Size size : sizeList)
-				Log.d(cam_tag+"prv", "size="+size.width+", "+size.height);
-			sizeList = p.getSupportedVideoSizes();
-			for(Size size : sizeList)
-				Log.d(cam_tag+"vd", "size="+size.width+", "+size.height);
-		}
-		
+//		if(p != null) {
+//			List<Camera.Size> sizeList = p.getSupportedPreviewSizes();
+//			for(Size size : sizeList)
+//				Log.d(cam_tag+"prv", "size="+size.width+", "+size.height);
+//			sizeList = p.getSupportedVideoSizes();
+//			for(Size size : sizeList)
+//				Log.d(cam_tag+"vd", "size="+size.width+", "+size.height);
+//		}
 //		p.setPreviewSize(camProfile.videoFrameWidth, camProfile.videoFrameHeight);
 //		p.setPreviewSize(1280, 720);
 //		p.setPreviewFormat(PixelFormat.JPEG);
@@ -190,6 +211,12 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			Log.e(cam_tag,e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	private void stopCamera() 
+	{
+		camera.stopPreview();
+		previewRunning = false;
+		camera.release();
 	}
 	private void resizeCamSurfaceView()
 	{
@@ -207,12 +234,25 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		}
 	}
 	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		Log.i(cam_tag, "surfaceCreated");
+		resizeCamSurfaceView();
+		startCamera(useCam);
+	}	
+	
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int pixelFormat, int width,
+			int height) {
+		Log.v(cam_tag, "::surfaceChanged::"+width+"*"+height);			
+	}
+	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.i(cam_tag, "surfaceDestroyed");	
-		camera.stopPreview();
-		previewRunning = false;
-		camera.release();
+		stopCamera();		
 	}
+	
+	
+	
 	
 	@Override
 	public void onInfo(MediaRecorder mr, int what, int extra) {
@@ -230,7 +270,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			}			
 		}
 	}	
-	
 //	@Override
 //	public boolean onTouchEvent(MotionEvent event) {
 //		// TODO Auto-generated method stub		
@@ -265,7 +304,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 //			CamcorderProfile camcorderProfile_HQ = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 //			recorder.setProfile(camcorderProfile_HQ);
 			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 			
 			recorder.setVideoSize(camProfile.videoFrameWidth,camProfile.videoFrameHeight);
 			//if g3

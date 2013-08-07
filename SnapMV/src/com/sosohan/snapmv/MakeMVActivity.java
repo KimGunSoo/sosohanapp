@@ -105,6 +105,11 @@ public class MakeMVActivity extends Activity {
 							{
 								appendMV(videoPaths.get(i));
 							}
+							if(new File("/sdcard/DCIM/a.mp4").exists())
+							{
+								Log.w(tag, "DEMO CODE add last MV:"+"/sdcard/DCIM/a.mp4");
+								appendMV("/sdcard/DCIM/a.mp4");
+							}
 							makeMV();
 							videoPaths.clear();
 							videoPaths.add(outputMV);
@@ -134,7 +139,7 @@ public class MakeMVActivity extends Activity {
              }else
              {
             	 Log.w(tag, path + "do NOT have a video in track 0.");
-             } 
+             }			 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
