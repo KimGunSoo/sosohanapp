@@ -34,17 +34,17 @@ public class RecordVideoActivity extends Activity {
 	
 	public static final int REC_MOV = 1;
 	private ArrayList<String> array = new ArrayList<String>();
-		
 	
-	private Button btnCamera;
-	private Button btnPreview;
-	private Button btnDone;	
+	private ImageView btnCamera;
+	private ImageView btnDone;	
 	private View.OnClickListener btnClickListener;
 	private View.OnTouchListener btnTouchListener;
-	
+	private ImageView bigPrev;
 	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();	
-	private ImageButton btnDebug_add_mv;
-	private Button btnDebug_make_text_image;
+	
+	int cnt = 8;
+	String promisedPath = "/sdcard/DCIM/";
+	//private Button btnDebug_make_text_image;
 	MediaDataPreference mediaPref = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +54,10 @@ public class RecordVideoActivity extends Activity {
 		
 		mediaPref = MediaDataPreference.getInstance(getApplicationContext());
 		
-		btnCamera = (Button) findViewById(R.id.camera_A_btn);
-		btnPreview = (Button) findViewById(R.id.preview_A_btn);
-		btnDone = (Button) findViewById(R.id.done_btn);
 		
-		btnDebug_add_mv = (ImageButton) findViewById(R.id.imageButton1);
-		btnDebug_make_text_image = (Button) findViewById(R.id.tmp_debug_btn);
+		bigPrev = (ImageView) findViewById(R.id.big_preview);
+		btnCamera = (ImageView) findViewById(R.id.camera_A_btn);
+		btnDone = (ImageView) findViewById(R.id.done_btn);	
 		
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView1));
@@ -79,13 +77,18 @@ public class RecordVideoActivity extends Activity {
 					for(int i=0 ; i < thumbnailArray.size() ; i++)	{					
 						thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
 					}
-					view.setColorFilter(0xaa111111, Mode.SRC_OVER);
+					view.setColorFilter(0xaaffd700, Mode.SRC_OVER);
 					Log.d("JWJWJW", "onTouch index = "+thumbnailArray.indexOf(view));
 					mediaPref.setCurrentIdx(thumbnailArray.indexOf(view));
+					
+					Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(thumbnailArray.indexOf(view)), Thumbnails.MINI_KIND);
+					bigPrev.setImageBitmap(thumbnail);
 				}					
 				return true;
 			}			
 		};
+		
+		
 		
 		for(int i=0 ; i < thumbnailArray.size() ; i++)	{					
 			thumbnailArray.get(i).setOnTouchListener(btnTouchListener);
@@ -100,31 +103,26 @@ public class RecordVideoActivity extends Activity {
 					Intent intent = new Intent(RecordVideoActivity.this,
 							CameraActivity.class);
 					startActivity(intent);
-				}else if (v == btnPreview && !array.isEmpty()) {					
+				}else if (v == bigPrev && !array.isEmpty()) {	
+					ArrayList<String> prev_array = new ArrayList<String>();
+					
 					Intent intent = new Intent(RecordVideoActivity.this, PreviewActivity.class);
-					intent.putStringArrayListExtra("videolist", array);	
+					
+					for(int i = mediaPref.getCurrentIdx(); i < cnt; i++){
+						Log.e("JWJWJW", promisedPath+i+".mp4");
+						if(new File(promisedPath+i+".mp4").exists())
+							prev_array.add(promisedPath+i+".mp4");
+					}
+					Log.e("bigPrev", "prev_array: " + prev_array ); 
+					intent.putStringArrayListExtra("videolist", prev_array);	
 					startActivity(intent);
 				}else if (v == btnDone){
 					Intent intent = new Intent(RecordVideoActivity.this,
 							SelectBgmActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
 					startActivity(intent);					
-				}else if (v == btnDebug_add_mv )
-				{
-					array.add("/sdcard/DCIM/Camera/VID_20130719_170343.3gp");
-					array.add("/sdcard/DCIM/Camera/VID_20130719_180532.3gp");
-										
-					for(int i=0 ; i < array.size() ; i++)	{
-						Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
-						Log.e("JWJWJW", "btnDebug_add_mv = " + array.get(i));
-						thumbnailArray.get(i).setImageBitmap(thumbnail);			
-					}
-					Intent intent = new Intent(RecordVideoActivity.this, MakeMVActivity.class);
-					intent.putStringArrayListExtra("videolist", array);	
-					intent.putExtra("audioPath", "/data/data/com.sosohan.snapmv/files/Brad_Sucks_-_Dirtbag_crop.m4a");
-
-					startActivity(intent);
 				}
+				/*
 				else if (v == btnDebug_make_text_image)
 				{
 					String path = "/sdcard";//Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -175,23 +173,21 @@ public class RecordVideoActivity extends Activity {
 						e.printStackTrace();
 					}
 				} 
+				*/
 			}
 		};
-		
+		bigPrev.setOnClickListener(btnClickListener);
 		btnCamera.setOnClickListener(btnClickListener);
-		btnPreview.setOnClickListener(btnClickListener);
 		btnDone.setOnClickListener(btnClickListener);
 		
-		btnDebug_add_mv.setOnClickListener(btnClickListener);
-		btnDebug_make_text_image.setOnClickListener(btnClickListener);
+		//btnDebug_make_text_image.setOnClickListener(btnClickListener);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		int cnt = 8;
+		
 		File [] filelist = new File[cnt];
-		String promisedPath = "/sdcard/DCIM/";
 		Log.e("JWJWJW", "onResume"); 
 		array.clear();
 		
@@ -209,7 +205,7 @@ public class RecordVideoActivity extends Activity {
 			thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
 		}		
 		int idx = mediaPref.getCurrentIdx();
-		thumbnailArray.get(idx).setColorFilter(0xaa111111, Mode.SRC_OVER);
+		thumbnailArray.get(idx).setColorFilter(0xaaffd700, Mode.SRC_OVER);
 	}
 	
 	@Override

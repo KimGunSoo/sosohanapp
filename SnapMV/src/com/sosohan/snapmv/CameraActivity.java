@@ -304,7 +304,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 //			CamcorderProfile camcorderProfile_HQ = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 //			recorder.setProfile(camcorderProfile_HQ);
 			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+			recorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
 			
 			recorder.setVideoSize(camProfile.videoFrameWidth,camProfile.videoFrameHeight);
 			//if g3
