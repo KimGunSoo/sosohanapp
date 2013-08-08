@@ -7,8 +7,8 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"        
-        android:background="#dddddd" >
+        android:layout_height="wrap_content"          
+        android:paddingTop="20dp" >
         
     <ImageView
         android:id="@+id/big_preview"
@@ -27,7 +27,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp" >
+        android:paddingTop="20dp" >
 
         <ImageView
             android:id="@+id/imageView0"
@@ -62,7 +62,7 @@
 	 <LinearLayout
 	     android:layout_width="wrap_content"
 	     android:layout_height="wrap_content"
-	     android:background="#dddddd">
+	     android:paddingBottom="20dp" >
 
         <ImageView
             android:id="@+id/imageView4"
@@ -96,21 +96,23 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#dddddd">
+        android:layout_height="60dp"
+        android:background="#dddddd"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp" >
 
         <ImageView
             android:id="@+id/tmp_debug_btn"
             android:layout_width="180dp"
-            android:layout_height="60dp"
-            android:background="#009dff"
+            android:layout_height="match_parent"
+            android:background="#333333"
             android:src="@android:drawable/ic_menu_help" />
 
         <ImageView
             android:id="@+id/camera_A_btn"
             android:layout_width="180dp"
             android:layout_height="match_parent"
-            android:background="#ffa200"
+            android:background="#333333"
             android:src="@android:drawable/ic_menu_camera" />
 
     </LinearLayout>
@@ -119,7 +121,7 @@
         android:id="@+id/done_btn"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:background="#b5d446"
+        android:background="#333333"
         android:src="@android:drawable/ic_menu_slideshow" />
 
 </LinearLayout>
