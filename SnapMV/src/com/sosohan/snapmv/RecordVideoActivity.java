@@ -60,7 +60,7 @@ public class RecordVideoActivity extends Activity {
 		btnDone = (ImageView) findViewById(R.id.done_btn);	
 		
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
-		thumbnailArray.add((ImageView) findViewById(R.id.imageView1));
+		thumbnailArray.add((ImageView) findViewById(R.id.prev_thumnail));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView2));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView3));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView4));

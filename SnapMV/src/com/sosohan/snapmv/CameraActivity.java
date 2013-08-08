@@ -3,12 +3,15 @@ package com.sosohan.snapmv;
 import java.io.IOException;
 import java.util.List;
 
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.ThumbnailUtils;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Bundle;
+import android.provider.MediaStore.Images.Thumbnails;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.util.DisplayMetrics;
@@ -22,6 +25,7 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 
@@ -30,6 +34,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	String promisedPath = "/sdcard/DCIM/";
 	SurfaceView camSurfaceView;
 	ImageView logoBtn;
+	ImageView prevThumbBtn;
+	TextView seqTxt;
 	ImageView changeCamBtn;
 	Camera camera;
 	int frontCam;
@@ -77,6 +83,20 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 				}								
 			}
 		});
+		prevThumbBtn = (ImageView)  findViewById(R.id.prev_thumnail);
+		prevThumbBtn.setOnClickListener(new View.OnClickListener() {
+			
+			@Override			
+			public void onClick(View v) {
+				if(idx > 0)
+				{
+					idx--;
+					updatePrev(idx);
+					seqTxt.setText("#"+ (idx + 1));
+					mediaPref.setCurrentIdx(idx);
+				}
+			}
+		});
 		changeCamBtn = (ImageView)  findViewById(R.id.change_cam);
 		changeCamBtn.setOnClickListener(new View.OnClickListener() {
 			
@@ -96,6 +116,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 				startCamera(useCam);
 			}
 		});
+		seqTxt = (TextView) findViewById(R.id.seq_MV_txt);
 		
 		holder = camSurfaceView.getHolder();
 		holder.addCallback(this);
@@ -155,6 +176,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		setLogoImage(rotation);
 		
 		idx = mediaPref.getCurrentIdx();
+		seqTxt.setText("#"+ (idx + 1));
+		if(idx > 0)
+		{			
+			updatePrev(idx-1);
+		}		
 	}	
 	
 	private int getCameraInfo(int info)
@@ -169,7 +195,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			if ( cameraInfo.facing == info  ) {
 				try {
 					Log.v(cam_tag, "camIdx="+camIdx);
-					//camera = Camera.open( camIdx );
 					result = camIdx;
 					Log.v(cam_tag, "camera="+camera);
 				} catch (RuntimeException e) {
@@ -233,6 +258,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			holder.setFixedSize((camProfile.videoFrameWidth*DisplayHeight)/camProfile.videoFrameHeight, DisplayHeight);
 		}
 	}
+	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.i(cam_tag, "surfaceCreated");
@@ -251,9 +277,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		stopCamera();		
 	}
 	
-	
-	
-	
 	@Override
 	public void onInfo(MediaRecorder mr, int what, int extra) {
 		if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
@@ -267,9 +290,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 				finish();
 			} else {
 				mediaPref.setCurrentIdx(idx);
+				updatePrev(idx-1);
+				seqTxt.setText("#"+ (idx + 1));
 			}			
 		}
 	}	
+	private void updatePrev(int seq)
+	{
+		Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+(seq)+".mp4", Thumbnails.MICRO_KIND);
+		prevThumbBtn.setImageBitmap(thumbnail);
+	}
 //	@Override
 //	public boolean onTouchEvent(MotionEvent event) {
 //		// TODO Auto-generated method stub		
