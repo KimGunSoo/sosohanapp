@@ -177,10 +177,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		
 		idx = mediaPref.getCurrentIdx();
 		seqTxt.setText("#"+ (idx + 1));
-		if(idx > 0)
-		{			
-			updatePrev(idx-1);
-		}		
+		updatePrev(idx);		
 	}	
 	
 	private int getCameraInfo(int info)
@@ -290,15 +287,18 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 				finish();
 			} else {
 				mediaPref.setCurrentIdx(idx);
-				updatePrev(idx-1);
+				updatePrev(idx);
 				seqTxt.setText("#"+ (idx + 1));
 			}			
 		}
 	}	
 	private void updatePrev(int seq)
 	{
-		Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+(seq)+".mp4", Thumbnails.MICRO_KIND);
-		prevThumbBtn.setImageBitmap(thumbnail);
+		if (seq > 0)
+		{ 
+			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+(seq-1)+".mp4", Thumbnails.MICRO_KIND);
+			prevThumbBtn.setImageBitmap(thumbnail);
+		}
 	}
 //	@Override
 //	public boolean onTouchEvent(MotionEvent event) {
