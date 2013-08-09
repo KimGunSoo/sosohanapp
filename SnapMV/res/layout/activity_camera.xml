@@ -23,10 +23,11 @@
             <TextView
                 android:id="@+id/current_mv_txt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"               
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="SCENE"
-                android:textColor="#dddddd" />
+                android:textColor="#dddddd"
+                android:textSize="20dp" />
 
         </TableRow>
 
@@ -41,7 +42,7 @@
             <TextView
                 android:id="@+id/seq_MV_txt"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="#1"
@@ -57,7 +58,7 @@
             android:layout_marginBottom="3dp"
             android:layout_marginRight="3dp"
             android:background="#333333" >
-
+			
             <ImageView
                 android:id="@+id/prev_thumnail"
                 android:layout_width="90dp"
@@ -66,20 +67,39 @@
                 android:src="@android:drawable/btn_dialog" />
 
         </TableRow>
+        
+         <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="3dp"
+            android:background="#333333" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="CAMERA"
+                android:textColor="#dddddd"
+                android:textSize="20dp" />
+
+        </TableRow>
 		
         <TableRow
-            android:id="@+id/tableRow4"
+            android:id="@+id/tableRow5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="3dp"
             android:background="#333333" >
 
             <ImageView
-                android:id="@+id/change_cam"                
+                android:id="@+id/change_cam"
                 android:layout_width="155dp"
-                android:layout_height="145dp"
+                android:layout_height="130dp"
                 android:layout_gravity="bottom"
-                android:src="@android:drawable/ic_menu_camera" />
+                android:padding="30dp"
+                android:src="@android:drawable/ic_menu_rotate" />
 
         </TableRow>
 

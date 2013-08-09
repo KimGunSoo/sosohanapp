@@ -291,15 +291,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 				seqTxt.setText("#"+ (idx + 1));
 			}			
 		}
-	}	
-	private void updatePrev(int seq)
-	{
-		if (seq > 0)
-		{ 
-			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+(seq-1)+".mp4", Thumbnails.MICRO_KIND);
-			prevThumbBtn.setImageBitmap(thumbnail);
-		}
-	}
+	}		
 //	@Override
 //	public boolean onTouchEvent(MotionEvent event) {
 //		// TODO Auto-generated method stub		
@@ -321,6 +313,15 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.camera, menu);
 		return true;
+	}
+	
+	private void updatePrev(int seq)
+	{
+		if (seq > 0)
+		{ 
+			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+(seq-1)+".mp4", Thumbnails.MICRO_KIND);
+			prevThumbBtn.setImageBitmap(thumbnail);
+		}
 	}
 	private void start() {
 		Log.v(cam_tag, "start");		

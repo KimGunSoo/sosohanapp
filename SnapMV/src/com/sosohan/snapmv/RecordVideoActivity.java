@@ -60,7 +60,7 @@ public class RecordVideoActivity extends Activity {
 		btnDone = (ImageView) findViewById(R.id.done_btn);	
 		
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
-		thumbnailArray.add((ImageView) findViewById(R.id.prev_thumnail));
+		thumbnailArray.add((ImageView) findViewById(R.id.imageView1));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView2));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView3));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView4));
@@ -78,10 +78,10 @@ public class RecordVideoActivity extends Activity {
 						thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
 					}
 					view.setColorFilter(0xaaffd700, Mode.SRC_OVER);
-					Log.d("JWJWJW", "onTouch index = "+thumbnailArray.indexOf(view));
-					mediaPref.setCurrentIdx(thumbnailArray.indexOf(view));
-					
-					Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(thumbnailArray.indexOf(view)), Thumbnails.MINI_KIND);
+					int thumbIdx = thumbnailArray.indexOf(view);
+					Log.d("JWJWJW", "onTouch index = "+ thumbIdx);
+					mediaPref.setCurrentIdx(thumbIdx);
+					Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+thumbIdx+".mp4", Thumbnails.MINI_KIND);
 					bigPrev.setImageBitmap(thumbnail);
 				}					
 				return true;
@@ -106,16 +106,17 @@ public class RecordVideoActivity extends Activity {
 				}else if (v == bigPrev && !array.isEmpty()) {	
 					ArrayList<String> prev_array = new ArrayList<String>();
 					
-					Intent intent = new Intent(RecordVideoActivity.this, PreviewActivity.class);
-					
 					for(int i = mediaPref.getCurrentIdx(); i < cnt; i++){
 						Log.e("JWJWJW", promisedPath+i+".mp4");
 						if(new File(promisedPath+i+".mp4").exists())
 							prev_array.add(promisedPath+i+".mp4");
 					}
 					Log.e("bigPrev", "prev_array: " + prev_array ); 
-					intent.putStringArrayListExtra("videolist", prev_array);	
-					startActivity(intent);
+					if (!prev_array.isEmpty()){
+						Intent intent = new Intent(RecordVideoActivity.this, PreviewActivity.class);
+						intent.putStringArrayListExtra("videolist", prev_array);	
+						startActivity(intent);	
+					}					
 				}else if (v == btnDone){
 					Intent intent = new Intent(RecordVideoActivity.this,
 							SelectBgmActivity.class);
@@ -187,23 +188,23 @@ public class RecordVideoActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
-		File [] filelist = new File[cnt];
+		//File [] filelist = new File[cnt];
 		Log.e("JWJWJW", "onResume"); 
 		array.clear();
 		
 		for(int i=0; i < cnt; i++){
-			filelist[i] = new File(promisedPath+i+".mp4");
+			//filelist[i] = new File(promisedPath+i+".mp4");
 			Log.e("JWJWJW", promisedPath+i+".mp4");
-			if(filelist[i].exists())
+			if(new File(promisedPath+i+".mp4").exists())
+			{
 				array.add(promisedPath+i+".mp4");
+				Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+i+".mp4", Thumbnails.MICRO_KIND);
+				thumbnailArray.get(i).setImageBitmap(thumbnail);
+				thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
+			}			
+			
 		}
-		
-		for(int i=0 ; i < array.size() ; i++)	{
-			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(array.get(i), Thumbnails.MICRO_KIND);
-			Log.e("JWJWJW", "btnDebug_add_mv = " + array.get(i));
-			thumbnailArray.get(i).setImageBitmap(thumbnail);
-			thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
-		}		
+			
 		int idx = mediaPref.getCurrentIdx();
 		thumbnailArray.get(idx).setColorFilter(0xaaffd700, Mode.SRC_OVER);
 	}
