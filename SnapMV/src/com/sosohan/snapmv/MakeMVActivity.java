@@ -75,7 +75,6 @@ public class MakeMVActivity extends Activity {
 	}
 	private ArrayList<String> videoPaths;
 	private String audioPath;
-	private Button btnTest;
 	private View.OnClickListener btnTestListener;
 	
 	@Override
@@ -84,46 +83,35 @@ public class MakeMVActivity extends Activity {
 		setContentView(R.layout.activity_make_mv);
 		debugFile = new SnapFileWriter();
 		
-		btnTest = (Button) findViewById(R.id.test_btn);		
 		Intent intent = getIntent();
 		videoPaths = (ArrayList<String>) intent.getSerializableExtra("videolist");
 		audioPath = (String) intent.getExtras().getString("audioPath");
 		Log.i(tag, videoPaths + "," + audioPath);
-		btnTestListener = new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				if(v== btnTest && !videoPaths.isEmpty())
+			
+		new Thread(new Runnable(){
+			public void run(){
+				//debugDumpOpen();
+				outputOpen();							
+				for (int i = 0; i < videoPaths.size() ; i ++)
 				{
-					btnTest.setClickable(false);
-					
-					new Thread(new Runnable(){
-						public void run(){
-							//debugDumpOpen();
-							outputOpen();							
-							for (int i = 0; i < videoPaths.size() ; i ++)
-							{
-								appendMV(videoPaths.get(i));
-							}
-							if(new File("/sdcard/DCIM/a.mp4").exists())
-							{
-								Log.w(tag, "DEMO CODE add last MV:"+"/sdcard/DCIM/a.mp4");
-								appendMV("/sdcard/DCIM/a.mp4");
-							}
-							makeMV();
-							videoPaths.clear();
-							videoPaths.add(outputMV);
-							Intent intent = new Intent(MakeMVActivity.this,
-									PreviewActivity.class);
-							intent.putStringArrayListExtra("videolist", videoPaths);	
-							startActivity(intent);					
-							finish();
-						}						
-					}).start();						
+					appendMV(videoPaths.get(i));
 				}
-			}
-		};		
-		btnTest.setOnClickListener(btnTestListener);	
+				if(new File("/sdcard/DCIM/a.mp4").exists())
+				{
+					Log.w(tag, "DEMO CODE add last MV:"+"/sdcard/DCIM/a.mp4");
+					appendMV("/sdcard/DCIM/a.mp4");
+				}
+				makeMV();
+				videoPaths.clear();
+				videoPaths.add(outputMV);
+				Intent intent = new Intent(MakeMVActivity.this,
+						PreviewActivity.class);
+				intent.putStringArrayListExtra("videolist", videoPaths);	
+				startActivity(intent);					
+				finish();
+			}						
+		}).start();	
+				
 	}
 	
 	List<Track> videoTracks = new LinkedList<Track>();
