@@ -21,7 +21,9 @@ import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
@@ -107,7 +109,9 @@ public class MakeMVActivity extends Activity {
 				Intent intent = new Intent(MakeMVActivity.this,
 						PreviewActivity.class);
 				intent.putStringArrayListExtra("videolist", videoPaths);	
-				startActivity(intent);					
+				startActivity(intent);	
+				sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, 
+						Uri.parse("file://"+ Environment.getExternalStorageDirectory())));	//refresh SD
 				finish();
 			}						
 		}).start();	
