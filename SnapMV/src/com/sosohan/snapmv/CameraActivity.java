@@ -35,6 +35,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	SurfaceView camSurfaceView;
 	ImageView logoBtn;
 	ImageView prevThumbBtn;
+	TextView camTxt;
 	TextView seqTxt;
 	ImageView changeCamBtn;
 	Camera camera;
@@ -117,6 +118,17 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			}
 		});
 		seqTxt = (TextView) findViewById(R.id.seq_MV_txt);
+		camTxt = (TextView) findViewById(R.id.cam_txt);
+		camTxt.setOnClickListener(new View.OnClickListener() {
+			int idx = 0;
+			@Override			
+			public void onClick(View v) {
+				stopCamera();
+				idx++;
+				Log.i(cam_tag+",camTxt", "setOnClickListener useCam"+useCam+","+idx);	
+				startCamera(useCam, idx);
+			}
+		});
 		
 		holder = camSurfaceView.getHolder();
 		holder.addCallback(this);
@@ -203,7 +215,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	}
 	
 	private boolean previewRunning;
-	private void startCamera(int cameraIdx)
+	private void startCamera(int cameraIdx, int effect)
 	{
 		camera = Camera.open( cameraIdx );
 		
@@ -211,6 +223,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			camera.stopPreview();
 		}
 		Camera.Parameters p = camera.getParameters();
+		List<String> supportColorEffects = p.getSupportedColorEffects();
+		effect = effect % supportColorEffects.size();
+		p.setColorEffect(supportColorEffects.get(effect));
+		//p.setColorEffect(Camera.Parameters.EFFECT_AQUA);
+		//p.setColorEffect(Camera.Parameters.SCENE_MODE_HDR);
 //		if(p != null) {
 //			List<Camera.Size> sizeList = p.getSupportedPreviewSizes();
 //			for(Size size : sizeList)
@@ -233,6 +250,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			Log.e(cam_tag,e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	
+	private void startCamera(int cameraIdx)
+	{
+		startCamera(cameraIdx, 0);
 	}
 	private void stopCamera() 
 	{
