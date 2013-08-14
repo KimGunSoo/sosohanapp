@@ -103,18 +103,20 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			
 			@Override			
 			public void onClick(View v) {
-				stopCamera();
-				if(useCam == frontCam)
-				{
-					useCam = backCam;
-					
+				if(!recording){
+					stopCamera();
+					if(useCam == frontCam)
+					{
+						useCam = backCam;
+
+					}
+					else //if (useCam == backCam)
+					{
+						useCam = frontCam;				
+					}
+					Log.i(cam_tag, "setOnClickListener useCam"+useCam);	
+					startCamera(useCam);
 				}
-				else //if (useCam == backCam)
-				{
-					useCam = frontCam;				
-				}
-				Log.i(cam_tag, "setOnClickListener useCam"+useCam);	
-				startCamera(useCam);
 			}
 		});
 		seqTxt = (TextView) findViewById(R.id.seq_MV_txt);
@@ -124,8 +126,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			@Override			
 			public void onClick(View v) {
 				stopCamera();
-				idx++;
-				Log.i(cam_tag+",camTxt", "setOnClickListener useCam"+useCam+","+idx);	
+				idx++;				
 				startCamera(useCam, idx);
 			}
 		});
@@ -141,10 +142,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			@Override
 			public void onOrientationChanged(int orientation) {				
 				if ((orientation <= 45 && orientation >= 0) || (orientation <= 359 && orientation >= 311)) {
-					Log.i("Test", "Portrait");					
+					//Log.i("Test", "Portrait");					
 					rotation = 270;
 				} else if (orientation <= 310 && orientation >= 225) {					
-					Log.i("Test", "Landscape");
+					//Log.i("Test", "Landscape");
 					rotation = 0;
 				}
 				if(!recording)
@@ -224,18 +225,37 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 		}
 		Camera.Parameters p = camera.getParameters();
 		List<String> supportColorEffects = p.getSupportedColorEffects();
-		effect = effect % supportColorEffects.size();
-		p.setColorEffect(supportColorEffects.get(effect));
-		//p.setColorEffect(Camera.Parameters.EFFECT_AQUA);
-		//p.setColorEffect(Camera.Parameters.SCENE_MODE_HDR);
-//		if(p != null) {
-//			List<Camera.Size> sizeList = p.getSupportedPreviewSizes();
-//			for(Size size : sizeList)
-//				Log.d(cam_tag+"prv", "size="+size.width+", "+size.height);
-//			sizeList = p.getSupportedVideoSizes();
-//			for(Size size : sizeList)
-//				Log.d(cam_tag+"vd", "size="+size.width+", "+size.height);
-//		}
+		
+		if (effect < 0) {
+			int res = supportColorEffects.indexOf("vintage-warm");
+			if (res != -1)
+			{
+				p.setColorEffect(supportColorEffects.get(res));
+			}
+			else {
+				res = p.getSupportedWhiteBalance().indexOf(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+				if (res != -1)
+					p.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
+			}				
+		}
+		else {
+			effect = effect % supportColorEffects.size();
+			Log.e(cam_tag,"supportColorEffects="+ p.getSupportedColorEffects());
+			Log.e(cam_tag,"anti="+ p.getSupportedAntibanding());
+			Log.e(cam_tag,"WB="+ p.getSupportedWhiteBalance());
+			Log.e(cam_tag,"getSupportedSceneModes="+ p.getSupportedSceneModes());
+			Log.e(cam_tag,"getSupportedFocusModes="+ p.getSupportedFocusModes());
+			p.setColorEffect(supportColorEffects.get(effect));
+		}
+		
+		if(p != null) {
+			List<Camera.Size> sizeList = p.getSupportedPreviewSizes();
+			for(Size size : sizeList)
+				Log.d(cam_tag+"prv", "size="+size.width+", "+size.height);
+			sizeList = p.getSupportedVideoSizes();
+			for(Size size : sizeList)
+				Log.d(cam_tag+"vd", "size="+size.width+", "+size.height);
+		}
 //		p.setPreviewSize(camProfile.videoFrameWidth, camProfile.videoFrameHeight);
 //		p.setPreviewSize(1280, 720);
 //		p.setPreviewFormat(PixelFormat.JPEG);
@@ -251,10 +271,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			e.printStackTrace();
 		}
 	}
-	
+	static final int SNAPMV = -1;
 	private void startCamera(int cameraIdx)
 	{
-		startCamera(cameraIdx, 0);
+		startCamera(cameraIdx, SNAPMV);
 	}
 	private void stopCamera() 
 	{
