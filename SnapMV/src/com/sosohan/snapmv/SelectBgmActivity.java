@@ -66,7 +66,7 @@ public class SelectBgmActivity extends Activity {
 			}
 		};
 		btnMakeMVActivity.setOnClickListener(btnBgmClickListener);
-
+		btnMakeMVActivity.setClickable(false);
 		audioPlayer = new MediaPlayer();
 	}
 
@@ -186,6 +186,8 @@ public class SelectBgmActivity extends Activity {
 
 		private void playBGM(String bgmName) {
 			selectedBGMPath = bgmPath +"/"+ bgmName;
+			btnMakeMVActivity.setClickable(true);
+			
 			if(DEBUG) Log.d(BGM_TAG,"BGM path= " + selectedBGMPath);
 
 			try {
