@@ -256,7 +256,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			for(Size size : sizeList)
 				Log.d(cam_tag+"vd", "size="+size.width+", "+size.height);
 		}
-//		p.setPreviewSize(camProfile.videoFrameWidth, camProfile.videoFrameHeight);
+		p.setPreviewSize(camProfile.videoFrameWidth, camProfile.videoFrameHeight);
 //		p.setPreviewSize(1280, 720);
 //		p.setPreviewFormat(PixelFormat.JPEG);
 		camera.setParameters(p);
