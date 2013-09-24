@@ -13,10 +13,10 @@
     <ImageView
         android:id="@+id/big_preview"
         android:layout_width="360dp"
-        android:layout_height="270dp"
-        android:layout_marginTop="20px"        
-        android:background="#333333"
-        android:src="@drawable/ic_snap_cam" />
+        android:layout_height="265dp"
+        android:layout_marginTop="20px"
+        android:background="#000000" />
+
     <ImageView        
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
         android:background="#333333"
-        android:text="TITLE"
+        android:text="Snap MV"
         android:textSize="20sp" />
 
 	</LinearLayout>
@@ -112,34 +112,40 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:background="#dddddd"
+        android:layout_height="55dp"
+        android:background="#dddddd"        
         android:paddingBottom="3dp"
         android:paddingTop="3dp" >
 
-        <ImageView
-            android:id="@+id/tmp_debug_btn"
+        <TextView
+            android:id="@+id/new_mv_btn"
+            style="@style/TextView_st"
             android:layout_width="180dp"
             android:layout_height="match_parent"
             android:layout_marginRight="1dp"
-            android:background="#333333"
-            android:src="@android:drawable/ic_menu_help" />
+            android:gravity="center"
+            android:src="@android:drawable/ic_menu_help"
+            android:text="New" />
 
-        <ImageView
+        <TextView
+            style="@style/TextView_st"
             android:id="@+id/camera_A_btn"
             android:layout_width="180dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="2dp"
-            android:background="#333333"
-            android:src="@android:drawable/ic_menu_camera" />
+            android:gravity="center"
+            android:src="@android:drawable/ic_menu_camera"
+            android:text="Camera" />
 
     </LinearLayout>
 
-    <ImageView
+    <TextView
+         style="@style/TextView_st"
         android:id="@+id/done_btn"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:background="#333333"
+        android:layout_height="55dp"
+        android:text="Done"
+        android:gravity="center"
         android:src="@android:drawable/ic_menu_slideshow" />
 
 </LinearLayout>

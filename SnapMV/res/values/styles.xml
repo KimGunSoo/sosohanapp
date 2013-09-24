@@ -11,10 +11,14 @@
             backward-compatibility can go here.
         -->
     </style>
-
+    
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
+	<style name="TextView_st" parent="@android:style/TextAppearance.Medium">
+		<item name="android:background">#333333</item>
+		<item name="android:textSize">20sp</item> 
+		<item name="android:textColor">@drawable/clickable_text</item>     		  
+    </style>
 </resources>

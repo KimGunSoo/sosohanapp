@@ -20,14 +20,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 public class RecordVideoActivity extends Activity {
@@ -35,8 +38,9 @@ public class RecordVideoActivity extends Activity {
 	public static final int REC_MOV = 1;
 	private ArrayList<String> array = new ArrayList<String>();
 	
-	private ImageView btnCamera;
-	private ImageView btnDone;	
+	private TextView btnNew;
+	private TextView btnCamera;
+	private TextView btnDone;	
 	private View.OnClickListener btnClickListener;
 	private View.OnTouchListener btnTouchListener;
 	private ImageView bigPrev;
@@ -46,6 +50,9 @@ public class RecordVideoActivity extends Activity {
 	String promisedPath = "/sdcard/DCIM/";
 	//private Button btnDebug_make_text_image;
 	MediaDataPreference mediaPref = null;
+	
+	private static Typeface mTypeface = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,10 +61,14 @@ public class RecordVideoActivity extends Activity {
 		
 		mediaPref = MediaDataPreference.getInstance(getApplicationContext());
 		
-		
+		//mTypeface = Typeface.createFromAsset(getAssets(),"font/space1.ttf");
+		mTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
 		bigPrev = (ImageView) findViewById(R.id.big_preview);
-		btnCamera = (ImageView) findViewById(R.id.camera_A_btn);
-		btnDone = (ImageView) findViewById(R.id.done_btn);	
+		btnNew = (TextView) findViewById(R.id.new_mv_btn);
+		btnCamera = (TextView) findViewById(R.id.camera_A_btn);
+		//btnCamera.setTypeface(tf,Typeface.BOLD);
+		btnDone = (TextView) findViewById(R.id.done_btn);	
+		//btnDone.setTypeface(tf,Typeface.BOLD);
 		
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView0));
 		thumbnailArray.add((ImageView) findViewById(R.id.imageView1));
@@ -81,6 +92,8 @@ public class RecordVideoActivity extends Activity {
 					int thumbIdx = thumbnailArray.indexOf(view);
 					Log.d("JWJWJW", "onTouch index = "+ thumbIdx);
 					mediaPref.setCurrentIdx(thumbIdx);
+					//String tmp = ""+thumbIdx;
+					setSceneNo(thumbIdx);
 					Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+thumbIdx+".mp4", Thumbnails.MINI_KIND);
 					bigPrev.setImageBitmap(thumbnail);
 				}					
@@ -122,6 +135,13 @@ public class RecordVideoActivity extends Activity {
 							SelectBgmActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
 					startActivity(intent);					
+				}/*else if (v == btnNew){
+					array.clear();
+					mediaPref.setCurrentIdx(0);	
+					for(int i=0 ; i < thumbnailArray.size() ; i++)	{
+						thumbnailArray.get(i).setImageBitmap(null);
+						thumbnailArray.get(i).setColorFilter(0x00000000, Mode.SRC_OVER);
+					}
 				}
 				/*
 				else if (v == btnDebug_make_text_image)
@@ -178,9 +198,11 @@ public class RecordVideoActivity extends Activity {
 			}
 		};
 		bigPrev.setOnClickListener(btnClickListener);
+		//btnNew.setOnClickListener(btnClickListener);
 		btnCamera.setOnClickListener(btnClickListener);
 		btnDone.setOnClickListener(btnClickListener);
-		
+
+		setGlobalFont(getWindow().getDecorView());
 		//btnDebug_make_text_image.setOnClickListener(btnClickListener);
 	}
 
@@ -189,12 +211,12 @@ public class RecordVideoActivity extends Activity {
 		super.onResume();
 		
 		//File [] filelist = new File[cnt];
-		Log.e("JWJWJW", "onResume"); 
+		Log.d("JWJWJW", "onResume"); 
 		array.clear();
 		
 		for(int i=0; i < cnt; i++){
 			//filelist[i] = new File(promisedPath+i+".mp4");
-			Log.e("JWJWJW", promisedPath+i+".mp4");
+			Log.d("JWJWJW", promisedPath+i+".mp4");
 			if(new File(promisedPath+i+".mp4").exists())
 			{
 				array.add(promisedPath+i+".mp4");
@@ -207,6 +229,7 @@ public class RecordVideoActivity extends Activity {
 			
 		int idx = mediaPref.getCurrentIdx();
 		thumbnailArray.get(idx).setColorFilter(0xaaffd700, Mode.SRC_OVER);
+		setSceneNo(idx);
 	}
 	
 	@Override
@@ -214,5 +237,25 @@ public class RecordVideoActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.video_capture, menu);
 		return true;
+	}
+	
+	private void setGlobalFont(View view) {
+		if (view != null) {
+			if(view instanceof ViewGroup){
+				ViewGroup vg = (ViewGroup)view;
+				int vgCnt = vg.getChildCount();
+				for(int i=0; i < vgCnt; i++){
+					View v = vg.getChildAt(i);
+					if(v instanceof TextView){
+						((TextView) v).setTypeface(mTypeface,Typeface.NORMAL);
+					}
+					setGlobalFont(v);
+				}
+			}
+		}
+	}
+	private void setSceneNo(int no)
+	{
+		btnNew.setText("Scene #"+(no+1));
 	}
 }

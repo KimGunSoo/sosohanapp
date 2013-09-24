@@ -32,10 +32,18 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/new_video_A_btn"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:text="Make new snap MV"
+        android:textColor="#444444"
+        android:textSize="20sp" />
+    
+    <Button
         android:id="@+id/record_video_A_btn"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:text="Make snap MV"
+        android:text="Load snap MV"
         android:textColor="#444444"
         android:textSize="20sp" />
 

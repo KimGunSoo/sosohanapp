@@ -17,6 +17,7 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	private static final boolean PREF_TEST = false;
 	private static final boolean PREF_TEST2 = false;
+	private Button btnNewVideoBtn;
 	private Button btnRecordVideoActivity;
 	private Button btnSettingActivity;
 	private View.OnClickListener btnClickListener;
@@ -27,14 +28,19 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
+		btnNewVideoBtn 			= (Button) findViewById(R.id.new_video_A_btn);
 		btnRecordVideoActivity	= (Button) findViewById(R.id.record_video_A_btn);
 		btnSettingActivity		= (Button) findViewById(R.id.setting_A_btn);
 		
 		btnClickListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (v == btnRecordVideoActivity) {
+				 if (v == btnNewVideoBtn) {
+					 //TODO:delete file
+					 Intent intent = new Intent(MainActivity.this,
+								RecordVideoActivity.class);
+					startActivity(intent);
+				}else if (v == btnRecordVideoActivity) {
 					Intent intent = new Intent(MainActivity.this,
 							RecordVideoActivity.class);
 					startActivity(intent);
@@ -45,7 +51,7 @@ public class MainActivity extends Activity {
 				}				
 			}
 		};
-
+		btnNewVideoBtn.setOnClickListener(btnClickListener);
 		btnRecordVideoActivity.setOnClickListener(btnClickListener);
 		btnSettingActivity.setOnClickListener(btnClickListener);
 
