@@ -38,7 +38,8 @@
         </activity>
         <activity
             android:name="com.sosohan.snapmv.SelectBgmActivity"
-            android:label="@string/title_activity_play_bgm" >
+            android:label="@string/title_activity_play_bgm"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name="com.sosohan.snapmv.PreviewActivity"
@@ -51,7 +52,8 @@
         </activity>
         <activity
             android:name="com.sosohan.snapmv.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name="com.sosohan.snapmv.CameraActivity"

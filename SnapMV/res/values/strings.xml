@@ -10,5 +10,7 @@
     <string name="title_activity_make_mv">MakeMVActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
+    <string name="SnapMV">SnapMV</string>
+    <string name="deleteSetting">Delete intermediate MV After making it</string>
 
 </resources>

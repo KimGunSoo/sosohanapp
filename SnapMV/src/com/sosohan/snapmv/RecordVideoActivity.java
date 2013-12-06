@@ -1,24 +1,16 @@
 package com.sosohan.snapmv;
 
-
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 
 import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Environment;
 import android.provider.MediaStore.Images.Thumbnails;
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -27,11 +19,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 
 public class RecordVideoActivity extends Activity {
 	
@@ -46,8 +35,8 @@ public class RecordVideoActivity extends Activity {
 	private ImageView bigPrev;
 	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();	
 	
-	int cnt = 8;
-	public static final String promisedPath = "/sdcard/DCIM/";
+	static final int cnt = 8;
+	public static final String promisedPath = Environment.getExternalStorageDirectory().getPath() +"/";// "/sdcard/DCIM/";
 	//private Button btnDebug_make_text_image;
 	MediaDataPreference mediaPref = null;
 	
@@ -171,8 +160,6 @@ public class RecordVideoActivity extends Activity {
 					} catch ( Exception e ) {
 						Log.e("testSaveView", "Exception: " + e.toString() ); 
 					}
-
-
 
 					Process chperm;
 					try {

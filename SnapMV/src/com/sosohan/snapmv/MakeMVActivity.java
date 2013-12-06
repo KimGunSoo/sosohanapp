@@ -1,15 +1,14 @@
 package com.sosohan.snapmv;
 
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,63 +26,27 @@ import android.os.Environment;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 public class MakeMVActivity extends Activity {
 	private String tag = "MakeMVActivity";
-	private final String outputMV = "/sdcard/DCIM/snap.mp4";
-	
-	private SnapFileWriter debugFile = null;
-	private final String debugFilePath = "/sdcard/jw.yuv";
-	private void debugDumpOpen()
-	{	
-		debugFile = new SnapFileWriter();		
-		debugFile.open(debugFilePath);
-	}
-	private void debugDumpClose()
-	{
-		debugFile.close();
-		debugFile = null;
-	}
-	private void debugDumpWrite(ByteBuffer buf)
-	{
-		if (debugFile == null)
-		{
-			Log.e("JWJWJW", "debug file is not opened.");
-		}
-		debugFile.write(buf);
-	}
-	
-	private SnapFileWriter outputFile = null;
-	private final String intermediateVideo = "/sdcard/snap.h264";
-	private void outputOpen()
-	{	
-		outputFile = new SnapFileWriter();		
-		outputFile.open(intermediateVideo);
-	}
-	private void outputClose()
-	{
-		outputFile.close();
-		outputFile = null;
-	}
-	private void outputWrite(ByteBuffer buf)
-	{
-		if (outputFile == null)
-		{
-			Log.e(tag, "output file is not opened.");
-		}
-		outputFile.write(buf);
-	}
+	private String outputMV = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath() ;// "/sdcard/DCIM/snap.mp4";
+		
 	private ArrayList<String> videoPaths;
 	private String audioPath;
-	private View.OnClickListener btnTestListener;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_make_mv);
-		debugFile = new SnapFileWriter();
+		
+		outputMV = outputMV + "/snapmv" 
+		+ Calendar.getInstance().get(Calendar.YEAR)
+		+ (Calendar.getInstance().get(Calendar.MONTH)+1)
+		+ Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+		+ Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+		+ Calendar.getInstance().get(Calendar.MINUTE)
+		+ Calendar.getInstance().get(Calendar.SECOND)
+		+".mp4";
 		
 		Intent intent = getIntent();
 		videoPaths = (ArrayList<String>) intent.getSerializableExtra("videolist");
@@ -91,17 +54,10 @@ public class MakeMVActivity extends Activity {
 		Log.i(tag, videoPaths + "," + audioPath);
 			
 		new Thread(new Runnable(){
-			public void run(){
-				//debugDumpOpen();
-				outputOpen();							
+			public void run(){					
 				for (int i = 0; i < videoPaths.size() ; i ++)
 				{
 					appendMV(videoPaths.get(i));
-				}
-				if(new File("/sdcard/DCIM/a.mp4").exists())
-				{
-					Log.w(tag, "DEMO CODE add last MV:"+"/sdcard/DCIM/a.mp4");
-					appendMV("/sdcard/DCIM/a.mp4");
 				}
 				makeMV();
 				videoPaths.clear();
