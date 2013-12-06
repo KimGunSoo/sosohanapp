@@ -31,7 +31,6 @@ import android.widget.ToggleButton;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, OnInfoListener{
 	String cam_tag = "CameraActivity";
-	String promisedPath = "/sdcard/DCIM/";
 	SurfaceView camSurfaceView;
 	ImageView logoBtn;
 	ImageView prevThumbBtn;
@@ -361,7 +360,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 	{
 		if (seq > 0)
 		{ 
-			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+(seq-1)+".mp4", Thumbnails.MICRO_KIND);
+			Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(RecordVideoActivity.promisedPath+(seq-1)+".mp4", Thumbnails.MICRO_KIND);
 			prevThumbBtn.setImageBitmap(thumbnail);
 		}
 	}
@@ -386,7 +385,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 			recorder.setVideoEncodingBitRate(6000000);
 			recorder.setMaxDuration(3000);	
 			recorder.setOnInfoListener(this);
-			recorder.setOutputFile(promisedPath+idx+".mp4"); 
+			recorder.setOutputFile(RecordVideoActivity.promisedPath+idx+".mp4"); 
 			recorder.setPreviewDisplay(holder.getSurface());
 			recorder.prepare();
 			recorder.start();

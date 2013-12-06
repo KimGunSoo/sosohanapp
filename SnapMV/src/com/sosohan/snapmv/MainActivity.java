@@ -1,10 +1,14 @@
 package com.sosohan.snapmv;
 
+import java.io.File;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.util.AttributeSet;
@@ -36,14 +40,23 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				 if (v == btnNewVideoBtn) {
-					 //TODO:delete file
-					 Intent intent = new Intent(MainActivity.this,
-								RecordVideoActivity.class);
-					startActivity(intent);
+					 boolean ask = false;
+					 for(int i = 0; i < 8; i++)
+					 {
+						 if(new File(RecordVideoActivity.promisedPath + i + ".mp4").exists())
+						 {				
+							 ask = true;
+							 break;
+						 }						 
+					 }
+					//dialog box	
+					 if(ask)
+						 ask_to_delete();	
+					 else
+						 start_record_activity();
+					 
 				}else if (v == btnRecordVideoActivity) {
-					Intent intent = new Intent(MainActivity.this,
-							RecordVideoActivity.class);
-					startActivity(intent);
+					start_record_activity();
 				}else if (v == btnSettingActivity) {
 					Intent intent = new Intent(MainActivity.this,
 							SettingsActivity.class);
@@ -59,7 +72,53 @@ public class MainActivity extends Activity {
 		if(PREF_TEST) test_preference();
 		
 	}
-
+	private void start_record_activity()
+	{
+		Intent intent = new Intent(MainActivity.this,
+				RecordVideoActivity.class);
+		startActivity(intent);
+	}
+	private void delete_intermediate_file()
+	{
+		for(int i = 0; i < 8; i++)
+		 {
+			 if(new File(RecordVideoActivity.promisedPath + i + ".mp4").delete())
+			 {
+				Log.d(TAG,"delete file :"+RecordVideoActivity.promisedPath + i + ".mp4"); 				 
+			 }
+			 else
+			 {
+				 Log.d(TAG,"not found file :"+RecordVideoActivity.promisedPath + i + ".mp4"); 
+			 }			 
+		 }
+	}
+	
+	private void ask_to_delete(){
+	    AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+	    alt_bld.setMessage("You have some saved clip. delete it all?").setCancelable(
+	        false).setPositiveButton("Yes",
+	        new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int id) {
+	            // Action for 'Yes' Button
+	        	delete_intermediate_file();
+	        	start_record_activity();
+	        }
+	        }).setNegativeButton("No",
+	        new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int id) {
+	            // Action for 'NO' Button
+	            dialog.cancel();
+	            start_record_activity();
+	        }
+	        });
+	    AlertDialog alert = alt_bld.create();
+	    // Title for AlertDialog
+	    alert.setTitle("Title");
+	    // Icon for AlertDialog
+	    //alert.setIcon(R.drawable.icon);
+	    alert.show();
+	}
+	
 	private void test_preference() {
 		String facebook_id;
 		MediaDataPreference mediaPref = null;

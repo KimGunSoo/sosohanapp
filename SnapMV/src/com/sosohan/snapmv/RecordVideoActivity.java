@@ -47,7 +47,7 @@ public class RecordVideoActivity extends Activity {
 	private ArrayList<ImageView> thumbnailArray = new ArrayList<ImageView>();	
 	
 	int cnt = 8;
-	String promisedPath = "/sdcard/DCIM/";
+	public static final String promisedPath = "/sdcard/DCIM/";
 	//private Button btnDebug_make_text_image;
 	MediaDataPreference mediaPref = null;
 	
