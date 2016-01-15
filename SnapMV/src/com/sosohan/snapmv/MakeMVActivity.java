@@ -66,8 +66,8 @@ public class MakeMVActivity extends Activity {
 						PreviewActivity.class);
 				intent.putStringArrayListExtra("videolist", videoPaths);	
 				startActivity(intent);	
-				sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, 
-						Uri.parse("file://"+ Environment.getExternalStorageDirectory())));	//refresh SD
+				//sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, 
+				//		Uri.parse("file://"+ Environment.getExternalStorageDirectory())));	//refresh SD
 				finish();
 			}						
 		}).start();	
