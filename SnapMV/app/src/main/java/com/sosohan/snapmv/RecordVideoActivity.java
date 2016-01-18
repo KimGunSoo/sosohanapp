@@ -23,7 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class RecordVideoActivity extends Activity {
-	
+	static final String TAG = "JWJWRVA";
+
 	public static final int REC_MOV = 1;
 	private ArrayList<String> array = new ArrayList<String>();
 	
@@ -79,7 +80,7 @@ public class RecordVideoActivity extends Activity {
 					}
 					view.setColorFilter(0xaaffd700, Mode.SRC_OVER);
 					int thumbIdx = thumbnailArray.indexOf(view);
-					Log.d("JWJWJW", "onTouch index = "+ thumbIdx);
+					Log.d(TAG, "onTouch index = "+ thumbIdx);
 					mediaPref.setCurrentIdx(thumbIdx);
 					//String tmp = ""+thumbIdx;
 					setSceneNo(thumbIdx);
@@ -109,7 +110,7 @@ public class RecordVideoActivity extends Activity {
 					ArrayList<String> prev_array = new ArrayList<String>();
 					
 					for(int i = mediaPref.getCurrentIdx(); i < cnt; i++){
-						Log.e("JWJWJW", promisedPath+i+".mp4");
+						Log.e(TAG, promisedPath+i+".mp4");
 						if(new File(promisedPath+i+".mp4").exists())
 							prev_array.add(promisedPath+i+".mp4");
 					}
@@ -119,9 +120,9 @@ public class RecordVideoActivity extends Activity {
 						intent.putStringArrayListExtra("videolist", prev_array);	
 						startActivity(intent);	
 					}					
-				}else if (v == btnDone){
+				}else if (v == btnDone && isAllClipAvailable()){
 					Intent intent = new Intent(RecordVideoActivity.this,
-							SelectBgmActivity.class);
+					SelectBgmActivity.class);
 					intent.putStringArrayListExtra("videolist", array);	
 					startActivity(intent);					
 				}/*else if (v == btnNew){
@@ -193,19 +194,26 @@ public class RecordVideoActivity extends Activity {
 		//btnDebug_make_text_image.setOnClickListener(btnClickListener);
 	}
 
+	private boolean isAllClipAvailable() {
+		for(int i=0; i < cnt; i++){
+			if(!(new File(promisedPath+i+".mp4").exists()))
+				return false;
+		}
+		return true;
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		
 		//File [] filelist = new File[cnt];
-		Log.d("JWJWJW", "onResume"); 
+		Log.d(TAG, "onResume");
 		array.clear();
 		
 		for(int i=0; i < cnt; i++){
 			//filelist[i] = new File(promisedPath+i+".mp4");
-			Log.d("JWJWJW", promisedPath+i+".mp4");
-			if(new File(promisedPath+i+".mp4").exists())
-			{
+			Log.d(TAG, promisedPath+i+".mp4");
+			if(new File(promisedPath+i+".mp4").exists()) {
 				array.add(promisedPath+i+".mp4");
 				Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(promisedPath+i+".mp4", Thumbnails.MICRO_KIND);
 				thumbnailArray.get(i).setImageBitmap(thumbnail);

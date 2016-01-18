@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/home/gg/Android/Sdk/extras/android/m2repository/com/android/support/support-v4/18.0.0/support-v4-18.0.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
+        <dex dex="/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/pre-dexed/debug/support-v4-18.0.0_40cffacccaf7be8d026c5fce18f97848f82972e7.jar" />
+    </item>
+    <item
+        jar="/home/gg/AndroidStudioProjects/SnapMV/app/libs/isoviewer-2.0-RC-23.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="9536ade5c0c06eb5f962dbf564c82f138bcaf004">
+        <dex dex="/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/pre-dexed/debug/isoviewer-2.0-RC-23_9860a4abb2f7a4ed260b91464b04bba101f5156c.jar" />
+    </item>
+
+</items>
