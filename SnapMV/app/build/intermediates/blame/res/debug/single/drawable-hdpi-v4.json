@@ -1,0 +1,58 @@
+[
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_snap_cam_rec.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/ic_snap_cam_rec.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/bg_bar.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/bg_bar.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/cameraman.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/cameraman.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_launcher.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/backgroundbar.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/backgroundbar.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_snap_cam.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/ic_snap_cam.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_snap_cam_rec_po.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/ic_snap_cam_rec_po.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_snap.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/ic_snap.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/bg_train.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/bg_train.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/clickable_text.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/clickable_text.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/bg_bl.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/bg_bl.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_snap_cam_po.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/ic_snap_cam_po.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/bg_portrait.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/bg_portrait.png"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/bg_landscape.png",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/drawable-hdpi/bg_landscape.png"
+    }
+]

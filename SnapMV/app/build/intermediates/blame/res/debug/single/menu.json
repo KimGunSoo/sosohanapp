@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/menu/camera.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/menu/camera.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/menu/play_bgm.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/menu/play_bgm.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/menu/preview.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/menu/preview.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/menu/main.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/menu/main.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/menu/make_mv.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/menu/make_mv.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/menu/video_capture.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/menu/video_capture.xml"
+    },
+    {
+        "merged": "/home/gg/AndroidStudioProjects/SnapMV/app/build/intermediates/res/merged/debug/menu/settings.xml",
+        "source": "/home/gg/AndroidStudioProjects/SnapMV/app/src/main/res/menu/settings.xml"
+    }
+]

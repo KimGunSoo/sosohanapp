@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <string name="SnapMV">SnapMV</string>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">SnapMV</string>
+    <string name="deleteSetting">Delete intermediate MV After making it</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_camera">CameraActivity</string>
+    <string name="title_activity_make_mv">MakeMVActivity</string>
+    <string name="title_activity_play_bgm">PlayBgmActivity</string>
+    <string name="title_activity_preview">PreviewActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_video_capture">VideoCaptureActivity</string>
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    <style name="TextView_st" parent="@android:style/TextAppearance.Medium">
+		<item name="android:background">#333333</item>
+		<item name="android:textSize">20sp</item> 
+		<item name="android:textColor">@drawable/clickable_text</item>     		  
+    </style>
+</resources>

@@ -1,0 +1,151 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#333333"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/backgroundbar" >
+        
+    <ImageView
+        android:id="@+id/big_preview"
+        android:layout_width="360dp"
+        android:layout_height="265dp"
+        android:layout_marginTop="20px"
+        android:background="#000000" />
+
+    <ImageView        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@android:drawable/ic_menu_slideshow" />
+    
+	</FrameLayout>
+	
+	<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#dddddd" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:background="#333333"
+        android:text="Snap MV"
+        android:textSize="20sp" />
+
+	</LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dp" >
+
+        <ImageView
+            android:id="@+id/imageView0"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:fitsSystemWindows="true"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+	</LinearLayout>
+
+	 <LinearLayout
+	     android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:paddingBottom="3dp" >
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="#333333"
+            android:src="@android:drawable/ic_menu_help" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:background="#dddddd"        
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp" >
+
+        <TextView
+            android:id="@+id/new_mv_btn"
+            style="@style/TextView_st"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="1dp"
+            android:gravity="center"
+            android:src="@android:drawable/ic_menu_help"
+            android:text="New" />
+
+        <TextView
+            style="@style/TextView_st"
+            android:id="@+id/camera_A_btn"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="2dp"
+            android:gravity="center"
+            android:src="@android:drawable/ic_menu_camera"
+            android:text="Camera" />
+
+    </LinearLayout>
+
+    <TextView
+         style="@style/TextView_st"
+        android:id="@+id/done_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:text="Done"
+        android:gravity="center"
+        android:src="@android:drawable/ic_menu_slideshow" />
+
+</LinearLayout>
