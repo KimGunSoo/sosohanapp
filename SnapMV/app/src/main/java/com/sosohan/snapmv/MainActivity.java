@@ -49,10 +49,10 @@ public class MainActivity extends Activity {
 					 if(ask)
 						 ask_to_delete();	
 					 else
-						 start_record_activity();					 
-				}else if (v == btnRecordVideoActivity) {
+						 start_camera_activity();
+				} else if (v == btnRecordVideoActivity) {
 					start_record_activity();
-				}else if (v == btnSettingActivity) {
+				} else if (v == btnSettingActivity) {
 					Intent intent = new Intent(MainActivity.this,
 							SettingsActivity.class);
 					startActivity(intent);
@@ -73,6 +73,13 @@ public class MainActivity extends Activity {
 				RecordVideoActivity.class);
 		startActivity(intent);
 	}
+
+	private void start_camera_activity() {
+		Intent intent = new Intent(MainActivity.this,
+				CameraActivity.class);
+		startActivity(intent);
+	}
+
 	private void delete_intermediate_file()
 	{
 		for(int i = 0; i < 8; i++)
@@ -97,7 +104,7 @@ public class MainActivity extends Activity {
 	            // Action for 'Yes' Button
 	        	rewindIdx();
 	        	delete_intermediate_file();
-	        	start_record_activity();
+				start_camera_activity();
 	        }
 	        }).setNegativeButton("No",
 	        new DialogInterface.OnClickListener() {

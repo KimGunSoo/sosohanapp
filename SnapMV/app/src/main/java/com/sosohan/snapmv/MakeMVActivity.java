@@ -28,6 +28,8 @@ import android.os.Environment;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 public class MakeMVActivity extends Activity {
 	private String tag = "MakeMVActivity";
@@ -71,10 +73,13 @@ public class MakeMVActivity extends Activity {
 				MediaScannerConnection.scanFile(getApplicationContext(), new String[]{outputMV}, new String[]{"video/mpeg4"}, null);
 				//sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 				//		Uri.parse("file://"+ Environment.getExternalStorageDirectory())));	//refresh SD
+
 				finish();
 			}						
-		}).start();	
-				
+		}).start();
+		Toast toast = Toast.makeText(getApplicationContext(), outputMV+" is made",Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.CENTER, 0, 0);
+		toast.show();
 	}
 	
 	List<Track> videoTracks = new LinkedList<Track>();
