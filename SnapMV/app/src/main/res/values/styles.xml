@@ -18,7 +18,7 @@
     </style>
 	<style name="TextView_st" parent="@android:style/TextAppearance.Medium">
 		<item name="android:background">#333333</item>
-		<item name="android:textSize">20sp</item> 
+		<item name="android:textSize">20sp</item>
 		<item name="android:textColor">@drawable/clickable_text</item>     		  
     </style>
 </resources>

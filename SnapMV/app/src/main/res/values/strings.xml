@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SnapMV</string>
+    <string name="app_name">MV Log</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_video_capture">VideoCaptureActivity</string>
     <string name="title_activity_play_bgm">PlayBgmActivity</string>
     <string name="title_activity_preview">PreviewActivity</string>
     <string name="title_activity_make_mv">MakeMVActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
-    <string name="SnapMV">SnapMV</string>
-    <string name="deleteSetting">Delete intermediate MV After making it</string>
+    <string name="SnapMV">MV Log</string>
+    <string name="deleteSetting">Delete intermediate Clip After making it</string>
+    <string name="guide">Capture your time</string>
+    <string name="title_activity_ad">AdActivity</string>
 
+    <string name="interstitial_ad_sample">Interstitial Ad Sample</string>
+    <string name="start_level">Level 1</string>
+    <string name="next_level">Next Level</string>
+    <!-- -
+        This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
+        For more information, see https://support.google.com/admob/answer/3052638
+    <!- -->
+    <string name="banner_ad_unit_id">ca-app-pub-9020085264016671/2624450547</string>
+    <string name="banner_ad_unit_id_mv">ca-app-pub-9020085264016671/1448768545</string>
 </resources>
